@@ -1,0 +1,45 @@
+{
+  "id": "fq-restrain-movement",
+  "title": "FQ Restrain Movement",
+  "description": "Configurable token movement restrictions (max distance, no move on turn, no undo, ...), each toggleable, with per-case override hooks.",
+  "version": "0.1.0",
+  "languages": [
+    {
+      "lang": "en",
+      "name": "English",
+      "path": "lang/en.json",
+      "flags": {}
+    },
+    {
+      "lang": "fr",
+      "name": "Français",
+      "path": "lang/fr.json",
+      "flags": {}
+    }
+  ],
+  "authors": [
+    {
+      "name": "Lyrkhan",
+      "email": "lyrkhanjenkins@gmail.com",
+      "url": "https://gitlab.com/lyrkhanjenkins",
+      "discord": "lyrkhanjenkins",
+      "flags": {}
+    }
+  ],
+  "esmodules": [
+    "src/module.js"
+  ],
+  "styles": [],
+  "socket": false,
+  "url": "https://gitlab.com/final-quest/fq-restrain-movement",
+  "manifest": "https://gitlab.com/final-quest/fq-restrain-movement/-/raw/main/module.json",
+  "compatibility": {
+    "minimum": "14",
+    "verified": "14.365"
+  },
+  "relationships": {
+    "systems": [],
+    "requires": []
+  },
+  "flags": {}
+}

@@ -1,0 +1,18 @@
+{
+  "FQRESTRAIN.moduleTitle": "FQ Restrain Movement",
+  "FQRESTRAIN.settings.distanceEnabled.name": "Enable combat speed limit",
+  "FQRESTRAIN.settings.distanceEnabled.hint": "When enabled, on their turn in combat a token cannot move farther than its walking speed (in feet).",
+  "FQRESTRAIN.settings.turnEnabled.name": "Block movement out of turn",
+  "FQRESTRAIN.settings.turnEnabled.hint": "When enabled, in combat a token cannot move when it is not its turn.",
+  "FQRESTRAIN.settings.gmNotRestrained.name": "GM is not restrained",
+  "FQRESTRAIN.settings.gmNotRestrained.hint": "When enabled, the Game Master is exempt from all movement restrictions.",
+  "FQRESTRAIN.settings.takeBackEnabled.name": "Block taking back a move",
+  "FQRESTRAIN.settings.takeBackEnabled.hint": "When enabled, once a token has moved it cannot move back toward its engaged position.",
+  "FQRESTRAIN.settings.takeBackGraceSeconds.name": "Take-back grace window (seconds)",
+  "FQRESTRAIN.settings.takeBackGraceSeconds.hint": "Seconds during which a move can still be taken back before the position is locked in. 0 = lock immediately.",
+  "FQRESTRAIN.keybindings.bypass.name": "Bypass movement restrictions",
+  "FQRESTRAIN.keybindings.bypass.hint": "Hold this key to temporarily bypass all active movement restrictions.",
+  "FQRESTRAIN.notifications.distanceBlocked": "Combat movement limited to your speed ({speed} ft).",
+  "FQRESTRAIN.notifications.turnBlocked": "You cannot move: it is not this token's turn.",
+  "FQRESTRAIN.notifications.takeBackBlocked": "You cannot move back toward your starting position."
+}

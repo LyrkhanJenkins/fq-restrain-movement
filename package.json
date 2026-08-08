@@ -1,0 +1,20 @@
+{
+  "name": "fq-restrain-movement",
+  "version": "0.1.0",
+  "description": "Configurable token movement restrictions for Foundry VTT",
+  "type": "module",
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "lint": "eslint src ./tests",
+    "lint:fix": "eslint src ./tests --fix"
+  },
+  "devDependencies": {
+    "@eslint/js": "9.39.5",
+    "@vitest/coverage-v8": "4.1.10",
+    "eslint": "9.39.5",
+    "jsdom": "29.1.1",
+    "vitest": "4.1.10"
+  }
+}

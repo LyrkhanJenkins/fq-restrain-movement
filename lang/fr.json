@@ -1,0 +1,18 @@
+{
+  "FQRESTRAIN.moduleTitle": "FQ Restrain Movement",
+  "FQRESTRAIN.settings.distanceEnabled.name": "Activer la limite de vitesse de combat",
+  "FQRESTRAIN.settings.distanceEnabled.hint": "Si activé, à son tour en combat, un jeton ne peut pas se déplacer au-delà de sa vitesse de marche (en pieds).",
+  "FQRESTRAIN.settings.turnEnabled.name": "Bloquer le déplacement hors de son tour",
+  "FQRESTRAIN.settings.turnEnabled.hint": "Si activé, en combat, un jeton ne peut pas se déplacer quand ce n'est pas son tour.",
+  "FQRESTRAIN.settings.gmNotRestrained.name": "Le MJ n'est pas restreint",
+  "FQRESTRAIN.settings.gmNotRestrained.hint": "Si activé, le Maître de Jeu est exempté de toutes les restrictions de déplacement.",
+  "FQRESTRAIN.settings.takeBackEnabled.name": "Interdire d'annuler un déplacement",
+  "FQRESTRAIN.settings.takeBackEnabled.hint": "Si activé, une fois qu'un jeton s'est déplacé, il ne peut plus revenir vers sa position engagée.",
+  "FQRESTRAIN.settings.takeBackGraceSeconds.name": "Fenêtre de grâce du retour en arrière (secondes)",
+  "FQRESTRAIN.settings.takeBackGraceSeconds.hint": "Nombre de secondes pendant lesquelles un déplacement peut encore être annulé avant que la position ne soit figée. 0 = gel immédiat.",
+  "FQRESTRAIN.keybindings.bypass.name": "Contourner les restrictions de déplacement",
+  "FQRESTRAIN.keybindings.bypass.hint": "Maintenez cette touche pour contourner temporairement toutes les restrictions de déplacement actives.",
+  "FQRESTRAIN.notifications.distanceBlocked": "Déplacement de combat limité à votre vitesse ({speed} pieds).",
+  "FQRESTRAIN.notifications.turnBlocked": "Déplacement impossible : ce n'est pas le tour de ce jeton.",
+  "FQRESTRAIN.notifications.takeBackBlocked": "Vous ne pouvez pas revenir vers votre position de départ."
+}

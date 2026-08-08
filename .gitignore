@@ -1,0 +1,18 @@
+# IDE
+.idea/
+.nova/
+.vs/
+.vscode/
+*.code-workspace
+*.iml
+
+# Node Modules
+node_modules/
+
+# Temporary
+/coverage/
+test-results.xml
+*.zip
+
+# Planning
+.planning/
