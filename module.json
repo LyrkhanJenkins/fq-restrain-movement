@@ -33,6 +33,7 @@
   "socket": false,
   "url": "https://gitlab.com/final-quest/fq-restrain-movement",
   "manifest": "https://gitlab.com/final-quest/fq-restrain-movement/-/raw/main/module.json",
+  "download": "https://gitlab.com/final-quest/fq-restrain-movement/-/jobs/15784773042/artifacts/raw/fq-restrain-movement.zip",
   "compatibility": {
     "minimum": "14",
     "verified": "14.365"
