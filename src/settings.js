@@ -32,7 +32,7 @@ export function registerSettings() {
     scope: "world",
     config: true,
     type: Boolean,
-    default: false,
+    default: true,
     name: "FQRESTRAIN.settings.distanceEnabled.name",
     hint: "FQRESTRAIN.settings.distanceEnabled.hint",
   });
@@ -41,7 +41,7 @@ export function registerSettings() {
     scope: "world",
     config: true,
     type: Boolean,
-    default: false,
+    default: true,
     name: "FQRESTRAIN.settings.turnEnabled.name",
     hint: "FQRESTRAIN.settings.turnEnabled.hint",
   });

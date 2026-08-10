@@ -1,3 +1,7 @@
+v1.0.0:
+Fix :
+- Par défaut les 2 première régles de restriction de mouvement en combat sont appliqués
+
 v0.1.0:
 Feat :
 - En combat et à son tour, déplacement limité à la vitesse de l'acteur. (pour le moment que walk)

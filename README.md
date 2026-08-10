@@ -15,11 +15,11 @@ Le module intercepte souris **et** clavier : les deux passent par le même point
 
 | Réglage | Effet | Défaut |
 |---------|-------|--------|
-| Enable combat speed limit | Limite le déplacement à la vitesse de marche, à son tour en combat | Off |
-| Block movement out of turn | Bloque tout déplacement hors de son tour en combat | Off |
-| GM is not restrained | Exempte le MJ de toutes les restrictions | On |
-| Block taking back a move | Interdit le retour vers la position engagée | Off |
-| Take-back grace window (seconds) | Délai avant gel de la position (`0` = gel immédiat) | 0 |
+| Enable combat speed limit | Limite le déplacement à la vitesse de marche, à son tour en combat | On     |
+| Block movement out of turn | Bloque tout déplacement hors de son tour en combat | On     |
+| GM is not restrained | Exempte le MJ de toutes les restrictions | On     |
+| Block taking back a move | Interdit le retour vers la position engagée | Off    |
+| Take-back grace window (seconds) | Délai avant gel de la position (`0` = gel immédiat) | 0      |
 
 ## Contournements (override)
 
