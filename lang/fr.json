@@ -1,7 +1,7 @@
 {
   "FQRESTRAIN.moduleTitle": "FQ Restrain Movement",
   "FQRESTRAIN.settings.distanceEnabled.name": "Activer la limite de vitesse de combat",
-  "FQRESTRAIN.settings.distanceEnabled.hint": "Si activé, à son tour en combat, un jeton ne peut pas se déplacer au-delà de sa vitesse de marche (en pieds).",
+  "FQRESTRAIN.settings.distanceEnabled.hint": "Si activé, à son tour en combat, un jeton ne peut pas se déplacer au-delà de la vitesse du mode de déplacement qu'il utilise (marche, vol, terrier, escalade, nage), en pieds.",
   "FQRESTRAIN.settings.turnEnabled.name": "Bloquer le déplacement hors de son tour",
   "FQRESTRAIN.settings.turnEnabled.hint": "Si activé, en combat, un jeton ne peut pas se déplacer quand ce n'est pas son tour.",
   "FQRESTRAIN.settings.gmNotRestrained.name": "Le MJ n'est pas restreint",
@@ -13,6 +13,8 @@
   "FQRESTRAIN.keybindings.bypass.name": "Contourner les restrictions de déplacement",
   "FQRESTRAIN.keybindings.bypass.hint": "Maintenez cette touche pour contourner temporairement toutes les restrictions de déplacement actives.",
   "FQRESTRAIN.notifications.distanceBlocked": "Déplacement de combat limité à votre vitesse ({speed} pieds).",
+  "FQRESTRAIN.notifications.distanceBlockedAction": "Déplacement de combat limité à votre vitesse de {action} ({speed} pieds).",
+  "FQRESTRAIN.notifications.actionSpeedMissing": "Ce jeton n'a pas de vitesse de {action}.",
   "FQRESTRAIN.notifications.turnBlocked": "Déplacement impossible : ce n'est pas le tour de ce jeton.",
   "FQRESTRAIN.notifications.takeBackBlocked": "Vous ne pouvez pas revenir vers votre position de départ."
 }

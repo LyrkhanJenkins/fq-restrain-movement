@@ -70,3 +70,36 @@ export function makeContext(overrides = {}) {
     ...overrides,
   };
 }
+
+/**
+ * Construit un `measurePath` qui rend les cumuls par waypoint attendus par la
+ * règle de distance en mode « bascule de vitesse ». `segmentCosts[i]` est le
+ * coût en pieds du segment menant au waypoint `i + 1`.
+ * @param {number[]} segmentCosts
+ * @returns {(waypoints: Array) => { cost: number, distance: number, waypoints: Array<{cost: number, distance: number}> }}
+ */
+export function makeSegmentedMeasure(segmentCosts) {
+  return () => {
+    const cumulative = [{ cost: 0, distance: 0 }];
+    let total = 0;
+    for (const cost of segmentCosts) {
+      total += cost;
+      cumulative.push({ cost: total, distance: total });
+    }
+    return { cost: total, distance: total, waypoints: cumulative };
+  };
+}
+
+/**
+ * Construit un trajet de waypoints portant chacun son action de déplacement.
+ * Le premier waypoint est l'origine ; `actions[i]` est l'action du segment
+ * menant au waypoint `i + 1`.
+ * @param {string[]} actions
+ * @returns {Array<{x: number, y: number, action: string}>}
+ */
+export function makeActionPath(actions) {
+  return [
+    { x: 0, y: 0, action: actions[0] },
+    ...actions.map((action, index) => ({ x: (index + 1) * 100, y: 0, action })),
+  ];
+}

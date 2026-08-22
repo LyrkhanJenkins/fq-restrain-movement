@@ -1,9 +1,8 @@
 /**
  * Lecteurs de contexte de combat. Même patron que `src/overrides.js` : les
  * entrées Foundry passent par `deps` (injectables via `defaultDeps()`), la
- * logique reste pure et testable sans runtime Foundry. La lecture de vitesse
- * accède directement à `tokenDocument.actor...`, même convention défensive
- * que `isExempt()`.
+ * logique reste pure et testable sans runtime Foundry. Les vitesses sont
+ * lues par `src/movement.js`, qui dépend du mode de déplacement.
  */
 
 /**
@@ -44,27 +43,17 @@ export function getIsYourTurn(tokenDocument, deps) {
 }
 
 /**
- * Vitesse de marche du token (dnd5e). Lecture défensive :
- * `tokenDocument.actor?.system?.attributes?.movement?.walk` ; retourne
- * `undefined` si le chemin est absent (pas de crash).
- * @param {object} tokenDocument
- * @returns {number|undefined}
- */
-export function getSpeed(tokenDocument) {
-  return tokenDocument?.actor?.system?.attributes?.movement?.walk;
-}
-
-/**
- * Agrège les lecteurs de combat en `{ inCombat, isYourTurn, speed }`, fusionné
- * dans le contexte de mouvement par `buildMovementContext()`.
+ * Agrège les lecteurs de combat en `{ inCombat, isYourTurn }`, fusionné dans le
+ * contexte de mouvement par `buildMovementContext()`. Les vitesses sont lues à
+ * part par `readMovementContext()` (`src/movement.js`) : elles dépendent du
+ * mode de déplacement, pas du combat.
  * @param {object} tokenDocument
  * @param {{ getCombat: () => object|null|undefined }} [deps]
- * @returns {{ inCombat: boolean, isYourTurn: boolean, speed: number|undefined }}
+ * @returns {{ inCombat: boolean, isYourTurn: boolean }}
  */
 export function readCombatContext(tokenDocument, deps = defaultDeps()) {
   return {
     inCombat: getInCombat(deps),
     isYourTurn: getIsYourTurn(tokenDocument, deps),
-    speed: getSpeed(tokenDocument),
   };
 }

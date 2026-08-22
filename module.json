@@ -1,8 +1,8 @@
 {
   "id": "fq-restrain-movement",
   "title": "FQ Restrain Movement",
-  "description": "Configurable token movement restrictions (max distance, no move on turn, no undo, ...), each toggleable, with per-case override hooks.",
-  "version": "0.1.0",
+  "description": "Configurable token movement restrictions for dnd5e (speed limit per movement mode, no move out of turn, no undo, ...), each toggleable, with per-case override hooks.",
+  "version": "1.0.0",
   "languages": [
     {
       "lang": "en",
@@ -36,10 +36,19 @@
   "download": "https://gitlab.com/final-quest/fq-restrain-movement/-/jobs/15784773042/artifacts/raw/fq-restrain-movement.zip",
   "compatibility": {
     "minimum": "14",
-    "verified": "14.365"
+    "verified": "14.367"
   },
   "relationships": {
-    "systems": [],
+    "systems": [
+      {
+        "id": "dnd5e",
+        "type": "system",
+        "compatibility": {
+          "minimum": "5.0.0",
+          "verified": "5.3.3"
+        }
+      }
+    ],
     "requires": []
   },
   "flags": {}

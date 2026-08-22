@@ -6,7 +6,7 @@ Le module intercepte souris **et** clavier : les deux passent par le même point
 
 ## Fonctionnalités
 
-- **Limite de vitesse en combat** — à son tour, un token ne peut pas dépasser sa vitesse de marche (`walk`, en pieds). *(v0.1.0 : vitesse de marche uniquement.)*
+- **Limite de vitesse en combat** — à son tour, un token ne peut pas dépasser la vitesse du mode de déplacement qu'il utilise (marche, vol, terrier, escalade, nage), en pieds. Un mode sans vitesse propre (vol à 0, par exemple) interdit le déplacement ; escalade et nage retombent sur la vitesse de marche, et la téléportation n'est jamais plafonnée. Quand un tour mélange plusieurs modes, la règle dnd5e de bascule s'applique : la distance déjà parcourue est décomptée de la vitesse du nouveau mode.
 - **Blocage hors de son tour** — en combat, un token ne peut pas bouger tant que ce n'est pas son tour. Hors combat, aucune restriction.
 - **Exception MJ** — le MJ n'est pas soumis aux restrictions (activé par défaut).
 - **Interdiction de revenir en arrière (take-back)** — une fois déplacé, un token ne peut plus revenir vers sa position engagée, avec une fenêtre de grâce configurable pour corriger un déplacement avant qu'il ne soit figé.
@@ -15,7 +15,7 @@ Le module intercepte souris **et** clavier : les deux passent par le même point
 
 | Réglage | Effet | Défaut |
 |---------|-------|--------|
-| Enable combat speed limit | Limite le déplacement à la vitesse de marche, à son tour en combat | On     |
+| Enable combat speed limit | Limite le déplacement à la vitesse du mode utilisé, à son tour en combat | On     |
 | Block movement out of turn | Bloque tout déplacement hors de son tour en combat | On     |
 | GM is not restrained | Exempte le MJ de toutes les restrictions | On     |
 | Block taking back a move | Interdit le retour vers la position engagée | Off    |
@@ -33,7 +33,7 @@ Chaque restriction peut laisser passer un déplacement sans être désactivée g
 ## Compatibilité
 
 - Foundry VTT v14+ (vérifié 14.365)
-- Système dnd5e 5.3+
+- Système dnd5e 5.0+ (vérifié 5.3.3) — module réservé à dnd5e : la résolution des vitesses s'appuie sur `CONFIG.DND5E.movementTypes`
 - Aucune dépendance runtime
 
 ## Langues
