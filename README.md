@@ -6,7 +6,7 @@ Le module intercepte souris **et** clavier : les deux passent par le même point
 
 ## Fonctionnalités
 
-- **Limite de vitesse en combat** — à son tour, un token ne peut pas dépasser la vitesse du mode de déplacement qu'il utilise (marche, vol, terrier, escalade, nage), en pieds. Un mode sans vitesse propre (vol à 0, par exemple) interdit le déplacement ; escalade et nage retombent sur la vitesse de marche, et la téléportation n'est jamais plafonnée. Quand un tour mélange plusieurs modes, la règle dnd5e de bascule s'applique : la distance déjà parcourue est décomptée de la vitesse du nouveau mode.
+- **Limite de vitesse en combat** — à son tour, un token ne peut pas dépasser la vitesse du mode de déplacement qu'il utilise (marche, vol, terrier, escalade, nage), en pieds. Une vitesse à 0 interdit tout déplacement dans ce mode — un acteur avec une vitesse de marche à 0 ne peut pas bouger, et un jeton en mode vol sans vitesse de vol non plus. Escalade et nage retombent sur la vitesse de marche, et la téléportation n'est jamais plafonnée. Un jeton sans donnée de vitesse exploitable (véhicule, jeton sans acteur) n'est pas restreint. Quand un tour mélange plusieurs modes, la règle dnd5e de bascule s'applique : la distance déjà parcourue est décomptée de la vitesse du nouveau mode.
 - **Blocage hors de son tour** — en combat, un token ne peut pas bouger tant que ce n'est pas son tour. Hors combat, aucune restriction.
 - **Exception MJ** — le MJ n'est pas soumis aux restrictions (activé par défaut).
 - **Interdiction de revenir en arrière (take-back)** — une fois déplacé, un token ne peut plus revenir vers sa position engagée, avec une fenêtre de grâce configurable pour corriger un déplacement avant qu'il ne soit figé.

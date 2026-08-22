@@ -134,8 +134,13 @@ describe("movement / resolveActionSpeed", () => {
     expect(resolveActionSpeed("fly", null, deps)).toBeNull();
   });
 
-  it("ne restreint pas une action à repli marche sans vitesse de marche connue", () => {
-    expect(resolveActionSpeed("walk", { walk: 0 }, deps)).toBeNull();
+  it("bloque quand la vitesse de marche renseignée est 0 (acteur immobilisé)", () => {
+    expect(resolveActionSpeed("walk", makeMovement({ walk: 0 }), deps)).toBe(0);
+    expect(resolveActionSpeed("climb", makeMovement({ walk: 0 }), deps)).toBe(0);
+  });
+
+  it("ne restreint pas quand aucune vitesse n'est renseignée (véhicule, hors schéma créature)", () => {
+    expect(resolveActionSpeed("walk", { units: "ft" }, deps)).toBeNull();
     expect(resolveActionSpeed("climb", { walk: undefined }, deps)).toBeNull();
   });
 });
@@ -188,5 +193,6 @@ describe("movement / readMovementContext", () => {
     expect(context.movementAction).toBe("walk");
     expect(context.speed).toBeUndefined();
     expect(context.speedByAction.fly).toBeNull();
+    expect(context.speedByAction.walk).toBeNull();
   });
 });

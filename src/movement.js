@@ -69,9 +69,10 @@ export function usesWalkFallback(action, deps) {
 
 /**
  * Plafond de déplacement (en pieds) pour une action donnée.
- * - `null` : aucune restriction applicable (téléportation, acteur sans données
- *   de mouvement, ou action à repli marche sans vitesse de marche connue).
- * - `0` : mode indisponible pour cet acteur (ex. action « vol » sans vitesse de
+ * - `null` : aucune restriction applicable (téléportation, ou acteur sans
+ *   aucune donnée de vitesse — véhicule, token sans acteur...).
+ * - `0` : l'acteur ne peut pas se déplacer dans ce mode (vitesse à 0, que ce
+ *   soit la marche d'un acteur entravé ou une action « vol » sans vitesse de
  *   vol) — tout déplacement dans ce mode est bloqué.
  * - `n > 0` : plafond en pieds.
  * @param {string} action
@@ -88,10 +89,15 @@ export function resolveActionSpeed(action, movement, deps) {
   const own = toSpeed(movement[action]);
 
   if (usesWalkFallback(action, deps)) {
-    // Repli marche : le plafond est le meilleur des deux. Sans vitesse de
-    // marche connue, on ne restreint pas (défensif, comportement historique).
-    const best = Math.max(own ?? 0, toSpeed(movement.walk) ?? 0);
-    return best > 0 ? best : null;
+    const walk = toSpeed(movement.walk);
+
+    // Aucune des deux vitesses n'est renseignée (véhicule, acteur hors schéma
+    // créature...) : on ne restreint pas, faute de donnée exploitable.
+    if (own === null && walk === null) return null;
+
+    // Repli marche : le plafond est le meilleur des deux. Une vitesse à 0
+    // renseignée reste un plafond à 0 — l'acteur ne peut pas bouger.
+    return Math.max(own ?? 0, walk ?? 0);
   }
 
   // Mode dédié (vol, terrier) : pas de repli. `0` bloque, absent ne restreint pas.

@@ -72,6 +72,41 @@ describe("règle distance — plafond par mode de déplacement", () => {
     });
   });
 
+  it("bloque tout déplacement quand la vitesse de marche est 0", () => {
+    const rule = makeDistanceRule(makeDeps());
+    const context = combatCtx({
+      speedByAction: speeds({ walk: 0, climb: 0, swim: 0 }),
+      grid: makeGrid({ cost: 5 }),
+    });
+
+    const result = rule.evaluate(context);
+
+    expect(result.allowed).toBe(false);
+    expect(result.reason).toEqual({ key: "FQRESTRAIN.notifications.speedZero", data: {} });
+  });
+
+  it("bloque aussi l'escalade quand la marche et l'escalade sont à 0", () => {
+    const rule = makeDistanceRule(makeDeps());
+    const context = combatCtx({
+      movementAction: "climb",
+      speedByAction: speeds({ walk: 0, climb: 0 }),
+      grid: makeGrid({ cost: 5 }),
+    });
+
+    expect(rule.evaluate(context).allowed).toBe(false);
+  });
+
+  it("laisse passer la téléportation même avec toutes les vitesses à 0", () => {
+    const rule = makeDistanceRule(makeDeps());
+    const context = combatCtx({
+      movementAction: "blink",
+      speedByAction: speeds({ walk: 0, climb: 0, swim: 0, fly: 0 }),
+      grid: makeGrid({ cost: 999 }),
+    });
+
+    expect(rule.evaluate(context).allowed).toBe(true);
+  });
+
   it("laisse passer la téléportation (plafond null)", () => {
     const rule = makeDistanceRule(makeDeps());
     const context = combatCtx({ movementAction: "blink", grid: makeGrid({ cost: 999 }) });

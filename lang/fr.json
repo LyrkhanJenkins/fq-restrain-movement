@@ -15,6 +15,7 @@
   "FQRESTRAIN.notifications.distanceBlocked": "Déplacement de combat limité à votre vitesse ({speed} pieds).",
   "FQRESTRAIN.notifications.distanceBlockedAction": "Déplacement de combat limité à votre vitesse de {action} ({speed} pieds).",
   "FQRESTRAIN.notifications.actionSpeedMissing": "Ce jeton n'a pas de vitesse de {action}.",
+  "FQRESTRAIN.notifications.speedZero": "Ce jeton a une vitesse de 0 : il ne peut pas se déplacer.",
   "FQRESTRAIN.notifications.turnBlocked": "Déplacement impossible : ce n'est pas le tour de ce jeton.",
   "FQRESTRAIN.notifications.takeBackBlocked": "Vous ne pouvez pas revenir vers votre position de départ."
 }

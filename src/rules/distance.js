@@ -23,7 +23,8 @@ function feetOf(measured) {
 /**
  * Plafond applicable (en pieds) pour une action de déplacement.
  * - `null` : aucune restriction (téléportation, vitesse inconnue).
- * - `0` : mode indisponible pour cet acteur.
+ * - `0` : l'acteur ne peut pas se déplacer dans ce mode — tout déplacement
+ *   non nul est bloqué.
  * Consomme `context.speedByAction` fourni par `readMovementContext()` ; repli
  * sur `context.speed` seul pour les contextes qui n'exposent pas la carte.
  * @param {object} context
@@ -34,7 +35,7 @@ function limitFor(context, action) {
   const speeds = context.speedByAction;
   if (speeds && Object.hasOwn(speeds, action)) return speeds[action];
 
-  return typeof context.speed === "number" && context.speed > 0 ? context.speed : null;
+  return typeof context.speed === "number" && context.speed >= 0 ? context.speed : null;
 }
 
 /**
@@ -48,27 +49,29 @@ function limitFor(context, action) {
  */
 function blockedReason(context, action, limit) {
   const label = context.actionLabels?.[action];
-
-  if (!label || action === DEFAULT_MOVEMENT_ACTION) {
-    return { key: "FQRESTRAIN.notifications.distanceBlocked", data: { speed: limit } };
-  }
+  const named = Boolean(label) && action !== DEFAULT_MOVEMENT_ACTION;
 
   if (limit === 0) {
-    return { key: "FQRESTRAIN.notifications.actionSpeedMissing", data: { action: label } };
+    return named
+      ? { key: "FQRESTRAIN.notifications.actionSpeedMissing", data: { action: label } }
+      : { key: "FQRESTRAIN.notifications.speedZero", data: {} };
   }
 
-  return {
-    key: "FQRESTRAIN.notifications.distanceBlockedAction",
-    data: { speed: limit, action: label },
-  };
+  return named
+    ? {
+      key: "FQRESTRAIN.notifications.distanceBlockedAction",
+      data: { speed: limit, action: label },
+    }
+    : { key: "FQRESTRAIN.notifications.distanceBlocked", data: { speed: limit } };
 }
 
 /**
  * Règle de limite de vitesse de combat, sensible au mode de déplacement.
  * En combat et au tour du token, bloque tout déplacement dont le cumul mesuré
  * en PIEDS dépasse la vitesse du mode utilisé (marche, vol, terrier, escalade,
- * nage — cf. `src/movement.js`). Hors combat, hors tour, gridless ou vitesse
- * inconnue : no-op.
+ * nage — cf. `src/movement.js`). Une vitesse à 0 interdit tout déplacement
+ * dans ce mode. Hors combat, hors tour, gridless ou vitesse inconnue (acteur
+ * sans donnée de mouvement, téléportation) : no-op.
  *
  * Modes mélangés dans un même tour : applique la règle dnd5e de bascule de
  * vitesse — à chaque segment, le cumul parcouru depuis le début du tour doit

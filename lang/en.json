@@ -15,6 +15,7 @@
   "FQRESTRAIN.notifications.distanceBlocked": "Combat movement limited to your speed ({speed} ft).",
   "FQRESTRAIN.notifications.distanceBlockedAction": "Combat movement limited to your {action} speed ({speed} ft).",
   "FQRESTRAIN.notifications.actionSpeedMissing": "This token has no {action} speed.",
+  "FQRESTRAIN.notifications.speedZero": "This token has a speed of 0 and cannot move.",
   "FQRESTRAIN.notifications.turnBlocked": "You cannot move: it is not this token's turn.",
   "FQRESTRAIN.notifications.takeBackBlocked": "You cannot move back toward your starting position."
 }

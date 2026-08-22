@@ -102,14 +102,21 @@ describe("makeDistanceRule (limite de vitesse de combat)", () => {
     expect(result.reason).toBeFalsy();
   });
 
-  it("est un no-op quand la vitesse n'est pas positive (défensif)", () => {
+  it("bloque tout déplacement quand la vitesse est 0 (acteur immobilisé)", () => {
     const rule = makeDistanceRule(makeDeps());
-    const context = combatCtx({ speed: 0, grid: makeGrid({ cost: 999 }) });
+    const context = combatCtx({ speed: 0, grid: makeGrid({ cost: 5 }) });
 
     const result = rule.evaluate(context);
 
-    expect(result.allowed).toBe(true);
-    expect(result.reason).toBeFalsy();
+    expect(result.allowed).toBe(false);
+    expect(result.reason).toEqual({ key: "FQRESTRAIN.notifications.speedZero", data: {} });
+  });
+
+  it("laisse passer une mise à jour sans déplacement réel malgré une vitesse à 0", () => {
+    const rule = makeDistanceRule(makeDeps());
+    const context = combatCtx({ speed: 0, grid: makeGrid({ cost: 0 }) });
+
+    expect(rule.evaluate(context).allowed).toBe(true);
   });
 
   it("compare en pieds (cost) et non en cases (spaces) : spaces bas mais pieds hauts → bloqué", () => {
