@@ -34,6 +34,7 @@ describe("makeTakeBackRule (veto du retour en arrière)", () => {
   it("bloque un déplacement qui réduit strictement la distance à la position engagée", () => {
     const rule = makeTakeBackRule(makeDeps());
     const context = makeContext({
+      inCombat: true,
       engagedPosition: { x: 0, y: 0 },
       from: { x: 100, y: 0 },
       to: { x: 40, y: 0 },
@@ -52,6 +53,7 @@ describe("makeTakeBackRule (veto du retour en arrière)", () => {
   it("autorise un déplacement qui éloigne de la position engagée", () => {
     const rule = makeTakeBackRule(makeDeps());
     const context = makeContext({
+      inCombat: true,
       engagedPosition: { x: 0, y: 0 },
       from: { x: 100, y: 0 },
       to: { x: 160, y: 0 },
@@ -67,6 +69,7 @@ describe("makeTakeBackRule (veto du retour en arrière)", () => {
   it("autorise un déplacement latéral (distance égale ou supérieure, pas de réduction stricte)", () => {
     const rule = makeTakeBackRule(makeDeps());
     const context = makeContext({
+      inCombat: true,
       engagedPosition: { x: 0, y: 0 },
       from: { x: 100, y: 0 },
       to: { x: 100, y: 60 },
@@ -79,28 +82,42 @@ describe("makeTakeBackRule (veto du retour en arrière)", () => {
     expect(result.reason).toBeFalsy();
   });
 
-  it("est un no-op si le token n'est pas encore engagé, en ET hors combat", () => {
+  it("est un no-op hors combat, même sur un retour vers la position engagée", () => {
     const rule = makeTakeBackRule(makeDeps());
+    const context = makeContext({
+      inCombat: false,
+      engagedPosition: { x: 0, y: 0 },
+      from: { x: 100, y: 0 },
+      to: { x: 40, y: 0 },
+      grid: makeMeasuringGrid(),
+    });
 
-    for (const inCombat of [true, false]) {
-      const context = makeContext({
-        inCombat,
-        engagedPosition: null,
-        from: { x: 100, y: 0 },
-        to: { x: 40, y: 0 },
-        grid: makeMeasuringGrid(),
-      });
+    const result = rule.evaluate(context);
 
-      const result = rule.evaluate(context);
+    expect(result.allowed).toBe(true);
+    expect(result.reason).toBeFalsy();
+  });
 
-      expect(result.allowed).toBe(true);
-      expect(result.reason).toBeFalsy();
-    }
+  it("est un no-op si le token n'est pas encore engagé", () => {
+    const rule = makeTakeBackRule(makeDeps());
+    const context = makeContext({
+      inCombat: true,
+      engagedPosition: null,
+      from: { x: 100, y: 0 },
+      to: { x: 40, y: 0 },
+      grid: makeMeasuringGrid(),
+    });
+
+    const result = rule.evaluate(context);
+
+    expect(result.allowed).toBe(true);
+    expect(result.reason).toBeFalsy();
   });
 
   it("est un no-op sur scène gridless (miroir distance.js)", () => {
     const rule = makeTakeBackRule(makeDeps());
     const context = makeContext({
+      inCombat: true,
       engagedPosition: { x: 0, y: 0 },
       from: { x: 100, y: 0 },
       to: { x: 40, y: 0 },

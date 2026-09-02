@@ -18,14 +18,14 @@ function defaultDeps() {
  * `spaces`). Un déplacement latéral ou qui s'éloigne (distance égale ou
  * supérieure) est autorisé.
  *
- * Contrairement à turn/distance, cette règle N'A PAS de garde `!context.inCombat`
- * : elle s'applique en combat ET hors combat. Le seul garde-fou est l'absence
- * de `context.engagedPosition` (token pas encore engagé) : no-op.
+ * Comme turn/distance, la règle ne s'applique qu'EN COMBAT : hors combat, le
+ * déplacement est libre, retour sur ses pas compris. Second garde-fou :
+ * l'absence de `context.engagedPosition` (token pas encore engagé) : no-op.
  *
- * Logique pure : `evaluate(context)` ne lit que `context.*` (`engagedPosition`,
- * `from`, `to`, `grid`). Cette règle n'importe jamais `tracking.js` — l'état
- * arrive uniquement via le contexte, ce qui préserve la testabilité par
- * fixtures. Seul `isEnabled()` lit un réglage, via `deps.getSetting`
+ * Logique pure : `evaluate(context)` ne lit que `context.*` (`inCombat`,
+ * `engagedPosition`, `from`, `to`, `grid`). Cette règle n'importe jamais
+ * `tracking.js` — l'état arrive uniquement via le contexte, ce qui préserve la
+ * testabilité par fixtures. Seul `isEnabled()` lit un réglage, via `deps.getSetting`
  * (injectable). La règle ne connaît pas l'override (MJ/exempt) : c'est
  * `evaluate()` (decision.js) qui court-circuite via `context.override`.
  *
@@ -41,8 +41,12 @@ export function makeTakeBackRule(deps = {}) {
     isEnabled: () => Boolean(getSetting(SETTINGS.takeBackEnabled)),
 
     evaluate(context) {
-      // No-op si le token n'est pas (encore) engagé : cette règle s'applique
-      // en et hors combat, seule l'absence de position engagée fait no-op.
+      // No-op hors combat : le déplacement y est libre.
+      if (!context.inCombat) {
+        return { allowed: true, reason: null };
+      }
+
+      // No-op si le token n'est pas (encore) engagé.
       if (!context.engagedPosition) {
         return { allowed: true, reason: null };
       }

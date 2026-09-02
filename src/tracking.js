@@ -4,11 +4,16 @@ import { MODULE_ID, SETTINGS } from "./constants.js";
  * Service de suivi de la position engagée. L'état est module-level : une `Map`
  * indexée par `tokenDocument.id` porte `{ x, y, freezeTime }` par token.
  *
- * Le suivi vaut en combat comme hors combat.
+ * Le suivi ne vaut QU'EN COMBAT : la position engagée d'un token est celle
+ * qu'il occupe au début de son tour, et elle est oubliée à la fin de ce tour.
+ * Hors combat, aucune position n'est engagée — la règle take-back y est un
+ * no-op, le retour sur ses pas est libre.
  *
  * Le gel est évalué paresseusement à la lecture (`getEngagedPosition`) via une
  * comparaison `now() >= freezeTime` : aucun timer réel (`setTimeout`), donc
- * aucune fuite de ressource.
+ * aucune fuite de ressource. La fenêtre de grâce ouverte en début de tour laisse
+ * au joueur quelques secondes pour reprendre un déplacement avant que la
+ * position ne devienne opposable.
  *
  * Les lecteurs/écrivains ci-dessous sont purs et paramétrés par un `deps`
  * injectable (`getSetting`/`getCombat`/`now`), testables sans runtime Foundry.
@@ -39,7 +44,7 @@ function defaultDeps() {
  * @returns {number} secondes de grâce, toujours >= 0.
  */
 function readGraceSeconds(deps) {
-  const raw = Number(deps.getSetting(SETTINGS.takeBackGraceSeconds));
+  const raw = Number(deps.getSetting?.(SETTINGS.takeBackGraceSeconds));
   return Number.isFinite(raw) ? Math.max(0, raw) : 0;
 }
 
@@ -64,42 +69,23 @@ export function getEngagedPosition(tokenId, deps = defaultDeps()) {
 }
 
 /**
- * Appelée après un mouvement accepté. En combat -> no-op. Hors combat ->
- * engage l'origine du mouvement (`context.from`) comme position à ne plus
- * rejoindre, avec `freezeTime = deps.now() + grâce_ms`. Écrase l'entrée
- * existante de ce token.
- * @param {{ inCombat: boolean, tokenDocument: { id: string }, from: { x: number, y: number } }} context
- * @param {{ getSetting: (key: string) => any, now: () => number }} [deps]
- */
-export function updateEngagedPosition(context, deps = defaultDeps()) {
-  if (context?.inCombat) return;
-
-  const tokenId = context?.tokenDocument?.id;
-  if (!tokenId || !context?.from) return;
-
-  const graceSeconds = readGraceSeconds(deps);
-
-  engagedPositions.set(tokenId, {
-    x: context.from.x,
-    y: context.from.y,
-    freezeTime: deps.now() + graceSeconds * 1000,
-  });
-}
-
-/**
- * Engage la position courante d'un token avec gel immédiat
- * (`freezeTime = deps.now()`) : la grâce ne s'applique pas au reset de tour.
+ * Engage la position courante d'un token au début de son tour, avec
+ * `freezeTime = deps.now() + grâce_ms` : pendant la fenêtre de grâce la
+ * position n'est pas encore opposable, un déplacement peut être repris.
+ * Grâce à 0 (défaut) -> gel immédiat. Écrase l'entrée existante de ce token.
  * Défensif : no-op si `tokenDocument` ou son `id` est absent.
  * @param {{ id: string, x: number, y: number }} tokenDocument
- * @param {{ now: () => number }} [deps]
+ * @param {{ getSetting: (key: string) => any, now: () => number }} [deps]
  */
 export function engageAtTurnStart(tokenDocument, deps = defaultDeps()) {
   if (!tokenDocument?.id) return;
 
+  const graceSeconds = readGraceSeconds(deps);
+
   engagedPositions.set(tokenDocument.id, {
     x: tokenDocument.x,
     y: tokenDocument.y,
-    freezeTime: deps.now(),
+    freezeTime: deps.now() + graceSeconds * 1000,
   });
 }
 

@@ -1,7 +1,7 @@
 import { computeOverride } from "./overrides.js";
 import { readCombatContext } from "./combat.js";
 import { readMovementContext, getMovementAction } from "./movement.js";
-import { getEngagedPosition, updateEngagedPosition } from "./tracking.js";
+import { getEngagedPosition } from "./tracking.js";
 import { evaluate } from "./engine/decision.js";
 
 /**
@@ -90,9 +90,9 @@ export function buildMovementContext(tokenDocument, changes, options, userId) {
     // Contexte de mode de déplacement : movementAction/speed/speedByAction,
     // consommés par la règle de distance (dnd5e).
     ...readMovementContext(tokenDocument, changes),
-    // Position engagée : injectée depuis le service de suivi (tracking.js),
-    // consommée par la règle take-back. La règle reste pure — elle ne lit
-    // jamais tracking.js directement.
+    // Position engagée (début de tour, en combat) : injectée depuis le service
+    // de suivi (tracking.js), consommée par la règle take-back. La règle reste
+    // pure — elle ne lit jamais tracking.js directement.
     engagedPosition: getEngagedPosition(tokenDocument.id),
   };
 }
@@ -121,9 +121,6 @@ export function registerInterception() {
       ui.notifications.warn(msg);
       return false;
     }
-
-    // Mouvement accepté : met à jour le suivi de la position engagée.
-    updateEngagedPosition(context);
 
     return true;
   });

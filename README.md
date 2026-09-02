@@ -9,7 +9,7 @@ Le module intercepte souris **et** clavier : les deux passent par le même point
 - **Limite de vitesse en combat** — à son tour, un token ne peut pas dépasser la vitesse du mode de déplacement qu'il utilise (marche, vol, terrier, escalade, nage), en pieds. Une vitesse à 0 interdit tout déplacement dans ce mode — un acteur avec une vitesse de marche à 0 ne peut pas bouger, et un jeton en mode vol sans vitesse de vol non plus. Escalade et nage retombent sur la vitesse de marche, et la téléportation n'est jamais plafonnée. Un jeton sans donnée de vitesse exploitable (véhicule, jeton sans acteur) n'est pas restreint. Quand un tour mélange plusieurs modes, la règle dnd5e de bascule s'applique : la distance déjà parcourue est décomptée de la vitesse du nouveau mode.
 - **Blocage hors de son tour** — en combat, un token ne peut pas bouger tant que ce n'est pas son tour. Hors combat, aucune restriction.
 - **Exception MJ** — le MJ n'est pas soumis aux restrictions (activé par défaut).
-- **Interdiction de revenir en arrière (take-back)** — une fois déplacé, un token ne peut plus revenir vers sa position engagée, avec une fenêtre de grâce configurable pour corriger un déplacement avant qu'il ne soit figé.
+- **Interdiction de revenir en arrière (take-back)** — en combat, un token ne peut plus se rapprocher de la position où il a commencé son tour, avec une fenêtre de grâce configurable en début de tour pour corriger un déplacement avant qu'il ne soit figé. Hors combat, aucune restriction.
 
 ## Réglages (menu du module, réservés au MJ)
 
@@ -18,8 +18,8 @@ Le module intercepte souris **et** clavier : les deux passent par le même point
 | Enable combat speed limit | Limite le déplacement à la vitesse du mode utilisé, à son tour en combat | On     |
 | Block movement out of turn | Bloque tout déplacement hors de son tour en combat | On     |
 | GM is not restrained | Exempte le MJ de toutes les restrictions | On     |
-| Block taking back a move | Interdit le retour vers la position engagée | Off    |
-| Take-back grace window (seconds) | Délai avant gel de la position (`0` = gel immédiat) | 0      |
+| Block taking back a move | En combat, interdit le retour vers la position de début de tour | Off    |
+| Take-back grace window (seconds) | Délai après le début du tour avant gel de la position (`0` = gel immédiat) | 0      |
 
 ## Contournements (override)
 

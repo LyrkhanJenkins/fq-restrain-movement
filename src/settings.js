@@ -21,10 +21,10 @@ export function isBypassHeld() {
  * - `turnEnabled` : active/désactive le blocage du déplacement hors de son tour.
  * - `gmNotRestrained` : le MJ n'est pas soumis aux restrictions.
  * - `takeBackEnabled` : active/désactive le veto du retour en arrière (take-back).
- * - `takeBackGraceSeconds` : fenêtre de grâce (secondes) avant gel de la
- *   position engagée par le suivi de take-back. Défaut 0 (gel immédiat). Le
- *   plancher défensif (négatif/NaN -> 0) est assuré à la lecture dans
- *   `tracking.js`, aucune contrainte min/max codée côté Foundry.
+ * - `takeBackGraceSeconds` : fenêtre de grâce (secondes) ouverte au début du
+ *   tour avant que la position engagée ne devienne opposable. Défaut 0 (gel
+ *   immédiat). Le plancher défensif (négatif/NaN -> 0) est assuré à la lecture
+ *   dans `tracking.js`, aucune contrainte min/max codée côté Foundry.
  * Tous `scope: "world"` : seul le MJ peut les modifier.
  */
 export function registerSettings() {

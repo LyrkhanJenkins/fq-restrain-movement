@@ -24,6 +24,7 @@ describe("intégration — veto du retour en arrière", () => {
 
   it("bloque un déplacement qui réduit strictement la distance à la position engagée", () => {
     const ctx = makeContext({
+      inCombat: true,
       engagedPosition: { x: 0, y: 0 },
       from: { x: 100, y: 0 },
       to: { x: 40, y: 0 },
@@ -40,6 +41,7 @@ describe("intégration — veto du retour en arrière", () => {
 
   it("autorise un déplacement qui éloigne de la position engagée", () => {
     const ctx = makeContext({
+      inCombat: true,
       engagedPosition: { x: 0, y: 0 },
       from: { x: 100, y: 0 },
       to: { x: 160, y: 0 },
@@ -54,6 +56,7 @@ describe("intégration — veto du retour en arrière", () => {
 
   it("autorise un déplacement latéral (distance égale ou supérieure)", () => {
     const ctx = makeContext({
+      inCombat: true,
       engagedPosition: { x: 0, y: 0 },
       from: { x: 100, y: 0 },
       to: { x: 100, y: 60 },
@@ -66,8 +69,24 @@ describe("intégration — veto du retour en arrière", () => {
     expect(decision.allowed).toBe(true);
   });
 
+  it("est un no-op hors combat, même sur un retour vers la position engagée", () => {
+    const ctx = makeContext({
+      inCombat: false,
+      engagedPosition: { x: 0, y: 0 },
+      from: { x: 100, y: 0 },
+      to: { x: 40, y: 0 },
+      grid: makeMeasuringGrid(),
+      override: false,
+    });
+
+    const decision = evaluate(ctx, NOOP);
+
+    expect(decision.allowed).toBe(true);
+  });
+
   it("est un no-op si le token n'est pas encore engagé", () => {
     const ctx = makeContext({
+      inCombat: true,
       engagedPosition: null,
       from: { x: 100, y: 0 },
       to: { x: 40, y: 0 },
@@ -82,6 +101,7 @@ describe("intégration — veto du retour en arrière", () => {
 
   it("est court-circuité par l'override (bypass MJ / token exempté)", () => {
     const ctx = makeContext({
+      inCombat: true,
       engagedPosition: { x: 0, y: 0 },
       from: { x: 100, y: 0 },
       to: { x: 40, y: 0 },
