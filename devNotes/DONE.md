@@ -6,6 +6,7 @@ Feat :
 - Module explicitement lié au système dnd5e (relationships.systems dans module.json).
 Fix :
 - Par défaut les 2 première régles de restriction de mouvement en combat sont appliqués
+- Ne pas appliquer "Interdiction de revenir sur un déplacement déjà effectué" hors combat
 
 v0.1.0:
 Feat :

@@ -2,7 +2,7 @@
   "id": "fq-restrain-movement",
   "title": "FQ Restrain Movement",
   "description": "Configurable token movement restrictions for dnd5e (speed limit per movement mode, no move out of turn, no undo, ...), each toggleable, with per-case override hooks.",
-  "version": "1.0.0",
+  "version": "3.0.0",
   "languages": [
     {
       "lang": "en",

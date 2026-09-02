@@ -1,8 +1,8 @@
 ## V1.x
 ### Feat
-- Gérer le dash?
+-
 ### Fix
-- Ne pas appliquer "Interdiction de revenir sur un déplacement déjà effectué" hors combat
+- 
 
 ## Backlog
 ### Feat
