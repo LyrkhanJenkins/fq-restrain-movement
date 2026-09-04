@@ -1,4 +1,4 @@
-v1.0.0:
+v3.0.0:
 Feat :
 - Limite de vitesse appliquée au mode de déplacement utilisé (marche, vol, terrier, escalade, nage) et non plus à la seule marche.
 - Modes mélangés sur un même tour : règle dnd5e de bascule de vitesse (le cumul du tour doit rester dans la vitesse du mode utilisé sur chaque segment).
