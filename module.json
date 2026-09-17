@@ -36,7 +36,7 @@
   "download": "https://gitlab.com/final-quest/fq-restrain-movement/-/jobs/15784773042/artifacts/raw/fq-restrain-movement.zip",
   "compatibility": {
     "minimum": "14",
-    "verified": "14.367"
+    "verified": "14.368"
   },
   "relationships": {
     "systems": [
