@@ -33,7 +33,7 @@ Chaque restriction peut laisser passer un déplacement sans être désactivée g
 ## Compatibilité
 
 - Foundry VTT v14+ (vérifié 14.365)
-- Système dnd5e 5.0+ (vérifié 5.3.3) — module réservé à dnd5e : la résolution des vitesses s'appuie sur `CONFIG.DND5E.movementTypes`
+- Système dnd5e 6.0+ (vérifié 6.0.3) — module réservé à dnd5e : la résolution des vitesses s'appuie sur `CONFIG.DND5E.movementTypes`
 - Aucune dépendance runtime
 
 ## Langues

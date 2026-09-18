@@ -76,20 +76,21 @@ export function usesWalkFallback(action, deps) {
  *   vol) — tout déplacement dans ce mode est bloqué.
  * - `n > 0` : plafond en pieds.
  * @param {string} action
- * @param {object|null} movement - `actor.system.attributes.movement`
+ * @param {object|null} speeds - `actor.system.attributes.movement.speeds` (dnd5e 6
+ *   a déplacé les vitesses de la racine de `movement` vers cette carte)
  * @param {{ getActionConfig: Function, getMovementTypeConfig: Function }} deps
  * @returns {number|null}
  */
-export function resolveActionSpeed(action, movement, deps) {
-  if (!movement) return null;
+export function resolveActionSpeed(action, speeds, deps) {
+  if (!speeds) return null;
 
   // Téléportation (blink, displace...) : hors budget de déplacement.
   if (deps.getActionConfig(action)?.teleport) return null;
 
-  const own = toSpeed(movement[action]);
+  const own = toSpeed(speeds[action]);
 
   if (usesWalkFallback(action, deps)) {
-    const walk = toSpeed(movement.walk);
+    const walk = toSpeed(speeds.walk);
 
     // Aucune des deux vitesses n'est renseignée (véhicule, acteur hors schéma
     // créature...) : on ne restreint pas, faute de donnée exploitable.
@@ -133,7 +134,9 @@ export function getActionLabel(action, deps) {
 export function readMovementContext(tokenDocument, changes, deps = {}) {
   const resolved = { ...defaultDeps(), ...deps };
 
-  const movement = tokenDocument?.actor?.system?.attributes?.movement ?? null;
+  // dnd5e 6 : les vitesses vivent sous `movement.speeds` (un shim de lecture
+  // couvre encore `movement.walk`, mais il disparaît en dnd5e 7).
+  const speeds = tokenDocument?.actor?.system?.attributes?.movement?.speeds ?? null;
   const movementAction = getMovementAction(tokenDocument, changes);
 
   // L'action courante est toujours couverte, même absente du registre Foundry.
@@ -142,7 +145,7 @@ export function readMovementContext(tokenDocument, changes, deps = {}) {
   const speedByAction = {};
   const actionLabels = {};
   for (const action of actions) {
-    speedByAction[action] = resolveActionSpeed(action, movement, resolved);
+    speedByAction[action] = resolveActionSpeed(action, speeds, resolved);
     actionLabels[action] = getActionLabel(action, resolved);
   }
 

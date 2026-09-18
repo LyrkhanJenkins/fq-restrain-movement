@@ -45,16 +45,16 @@ function makeDeps() {
   };
 }
 
-/** Vitesses dnd5e complètes (le système initialise chaque clé à 0). */
-function makeMovement(overrides = {}) {
+/** Carte de vitesses dnd5e 6 (`movement.speeds`, chaque clé initialisée à 0). */
+function makeSpeeds(overrides = {}) {
   return { walk: 30, burrow: 0, climb: 0, fly: 0, jump: 0, swim: 0, ...overrides };
 }
 
 /** Construit un token factice portant les vitesses et l'action passées. */
-function makeToken({ movement, movementAction } = {}) {
+function makeToken({ speeds, movementAction } = {}) {
   const token = { id: "t1" };
   if (movementAction !== undefined) token.movementAction = movementAction;
-  if (movement !== undefined) token.actor = { system: { attributes: { movement } } };
+  if (speeds !== undefined) token.actor = { system: { attributes: { movement: { speeds } } } };
   return token;
 }
 
@@ -103,31 +103,31 @@ describe("movement / resolveActionSpeed", () => {
   const deps = makeDeps();
 
   it("retourne la vitesse de marche pour la marche", () => {
-    expect(resolveActionSpeed("walk", makeMovement(), deps)).toBe(30);
+    expect(resolveActionSpeed("walk", makeSpeeds(), deps)).toBe(30);
   });
 
   it("retourne la vitesse de vol quand l'acteur en a une", () => {
-    expect(resolveActionSpeed("fly", makeMovement({ fly: 60 }), deps)).toBe(60);
+    expect(resolveActionSpeed("fly", makeSpeeds({ fly: 60 }), deps)).toBe(60);
   });
 
   it("bloque le vol sans vitesse de vol : plafond 0, pas de repli marche", () => {
-    expect(resolveActionSpeed("fly", makeMovement(), deps)).toBe(0);
+    expect(resolveActionSpeed("fly", makeSpeeds(), deps)).toBe(0);
   });
 
   it("bloque le terrier sans vitesse de terrier : plafond 0", () => {
-    expect(resolveActionSpeed("burrow", makeMovement(), deps)).toBe(0);
+    expect(resolveActionSpeed("burrow", makeSpeeds(), deps)).toBe(0);
   });
 
   it("retombe sur la marche pour l'escalade sans vitesse d'escalade", () => {
-    expect(resolveActionSpeed("climb", makeMovement(), deps)).toBe(30);
+    expect(resolveActionSpeed("climb", makeSpeeds(), deps)).toBe(30);
   });
 
   it("prend la meilleure des deux quand l'escalade dépasse la marche", () => {
-    expect(resolveActionSpeed("climb", makeMovement({ climb: 40 }), deps)).toBe(40);
+    expect(resolveActionSpeed("climb", makeSpeeds({ climb: 40 }), deps)).toBe(40);
   });
 
   it("ne restreint pas la téléportation", () => {
-    expect(resolveActionSpeed("blink", makeMovement(), deps)).toBeNull();
+    expect(resolveActionSpeed("blink", makeSpeeds(), deps)).toBeNull();
   });
 
   it("ne restreint pas quand l'acteur n'a aucune donnée de mouvement", () => {
@@ -135,8 +135,8 @@ describe("movement / resolveActionSpeed", () => {
   });
 
   it("bloque quand la vitesse de marche renseignée est 0 (acteur immobilisé)", () => {
-    expect(resolveActionSpeed("walk", makeMovement({ walk: 0 }), deps)).toBe(0);
-    expect(resolveActionSpeed("climb", makeMovement({ walk: 0 }), deps)).toBe(0);
+    expect(resolveActionSpeed("walk", makeSpeeds({ walk: 0 }), deps)).toBe(0);
+    expect(resolveActionSpeed("climb", makeSpeeds({ walk: 0 }), deps)).toBe(0);
   });
 
   it("ne restreint pas quand aucune vitesse n'est renseignée (véhicule, hors schéma créature)", () => {
@@ -163,7 +163,7 @@ describe("movement / getActionLabel", () => {
 
 describe("movement / readMovementContext", () => {
   it("agrège action courante, vitesse courante et plafonds par action", () => {
-    const token = makeToken({ movement: makeMovement({ fly: 60 }), movementAction: "walk" });
+    const token = makeToken({ speeds: makeSpeeds({ fly: 60 }), movementAction: "walk" });
 
     const context = readMovementContext(token, { movementAction: "fly" }, makeDeps());
 
@@ -178,7 +178,7 @@ describe("movement / readMovementContext", () => {
   });
 
   it("couvre l'action courante même absente du registre Foundry", () => {
-    const token = makeToken({ movement: makeMovement() });
+    const token = makeToken({ speeds: makeSpeeds() });
 
     const context = readMovementContext(token, { movementAction: "inconnu" }, makeDeps());
 
@@ -193,6 +193,18 @@ describe("movement / readMovementContext", () => {
     expect(context.movementAction).toBe("walk");
     expect(context.speed).toBeUndefined();
     expect(context.speedByAction.fly).toBeNull();
+    expect(context.speedByAction.walk).toBeNull();
+  });
+
+  // dnd5e 6 a déplacé les vitesses de `movement.walk` vers `movement.speeds.walk`,
+  // derrière un shim de lecture qui disparaît en dnd5e 7. Lire la racine
+  // redeviendrait alors silencieusement « aucune vitesse connue », donc aucune
+  // restriction : ce test épingle la lecture sous `speeds`.
+  it("lit les vitesses sous `movement.speeds`, jamais à la racine de `movement` (dnd5e 6)", () => {
+    const legacy = { id: "t1", actor: { system: { attributes: { movement: makeSpeeds() } } } };
+
+    const context = readMovementContext(legacy, {}, makeDeps());
+
     expect(context.speedByAction.walk).toBeNull();
   });
 });
