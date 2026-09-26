@@ -50,7 +50,7 @@ Chaque restriction peut laisser passer un déplacement sans être désactivée g
 - Foundry VTT v14+ (vérifié 14.368)
 - **Tous les systèmes.** Seule la lecture des vitesses dépend du système ; tout le reste (interception, combat,
   suivi de position) n'utilise que des API cœur de Foundry. Les vitesses passent par un *adaptateur système* :
-  - **dnd5e** (vérifié 6.0.3) — adaptateur dédié : `system.attributes.movement.speeds`, modes et repli marche
+  - **dnd5e** (vérifié 6.0.5) — adaptateur dédié : `system.attributes.movement.speeds`, modes et repli marche
     depuis `CONFIG.DND5E.movementTypes`.
   - **pf2e** — adaptateur dédié : `system.attributes.speed` et `otherSpeeds` ; voler et creuser exigent une
     vitesse dédiée, nager et grimper retombent sur la vitesse au sol.
