@@ -2,7 +2,7 @@ v3.1.0 (non publiée) :
 Feat :
 - Support de tous les systèmes Foundry : la lecture des vitesses passe par une couche d'adaptateurs système (src/systems/), le reste du module n'utilise que des API cœur.
 - Adaptateurs embarqués : dnd5e (movement.speeds + CONFIG.DND5E.movementTypes), pf2e (attributes.speed + otherSpeeds), et un adaptateur générique qui sonde les emplacements habituels (attributes.movement, attributes.speed, movement, pace, details.move) en tolérant nombres, chaînes et objets (value/total/distance).
-- Réglage « Actor speed data path » : le MJ peut pointer directement les vitesses d'un système non détecté.
+- Réglage « Actor speed data path » : le MJ peut pointer directement les vitesses d'un système non détecté. Par défaut l'emplacement dnd5e 6 (system.attributes.movement.speeds), qui sert aussi d'exemple de format ; un chemin sans résultat rend la main au sondage automatique (signalé une fois en console, sauf pour le défaut).
 - API publique registerSystemAdapter/getSystemAdapter : un module ou système tiers branche ses propres vitesses ; le dernier adaptateur enregistré pour un système gagne.
 - Vitesses converties dans l'unité de la scène quand les deux unités sont connues et diffèrent ; les notifications annoncent l'unité de la scène au lieu des pieds codés en dur.
 - Plus de restriction de système dans module.json (relationships.systems retiré).

@@ -11,7 +11,7 @@
   "FQRESTRAIN.settings.takeBackGraceSeconds.name": "Take-back grace window (seconds)",
   "FQRESTRAIN.settings.takeBackGraceSeconds.hint": "Seconds after a turn starts during which a move can still be taken back before the position is locked in. 0 = lock immediately.",
   "FQRESTRAIN.settings.speedPath.name": "Actor speed data path",
-  "FQRESTRAIN.settings.speedPath.hint": "Only for systems the module does not detect on its own (dnd5e and pf2e are built in). Dot path to the actor data holding the speeds, e.g. \"system.attributes.movement\" for a per-mode object, or \"system.details.move.value\" for a single walk speed. Leave empty for automatic detection.",
+  "FQRESTRAIN.settings.speedPath.hint": "Only used for systems without a dedicated adapter (dnd5e and pf2e have one and ignore this). Dot path to the actor data holding the speeds: the default is the dnd5e 6 location, which also shows the expected format. Use a per-mode object such as \"system.attributes.movement\", or a single walk speed such as \"system.details.move.value\". When the path leads nowhere, the module falls back to automatic detection.",
   "FQRESTRAIN.keybindings.bypass.name": "Bypass movement restrictions",
   "FQRESTRAIN.keybindings.bypass.hint": "Hold this key to temporarily bypass all active movement restrictions.",
   "FQRESTRAIN.notifications.distanceBlocked": "Combat movement limited to your speed ({speed}).",

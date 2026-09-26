@@ -11,7 +11,7 @@
   "FQRESTRAIN.settings.takeBackGraceSeconds.name": "Fenêtre de grâce du retour en arrière (secondes)",
   "FQRESTRAIN.settings.takeBackGraceSeconds.hint": "Nombre de secondes après le début du tour pendant lesquelles un déplacement peut encore être annulé avant que la position ne soit figée. 0 = gel immédiat.",
   "FQRESTRAIN.settings.speedPath.name": "Chemin des vitesses de l'acteur",
-  "FQRESTRAIN.settings.speedPath.hint": "Uniquement pour les systèmes que le module ne détecte pas seul (dnd5e et pf2e sont gérés d'origine). Chemin pointé vers les données de vitesse de l'acteur, par exemple « system.attributes.movement » pour un objet par mode, ou « system.details.move.value » pour une vitesse de marche unique. Laisser vide pour la détection automatique.",
+  "FQRESTRAIN.settings.speedPath.hint": "Utilisé uniquement pour les systèmes sans adaptateur dédié (dnd5e et pf2e en ont un et ignorent ce réglage). Chemin pointé vers les données de vitesse de l'acteur : la valeur par défaut est l'emplacement dnd5e 6, qui sert aussi d'exemple de format. Indiquer un objet par mode comme « system.attributes.movement », ou une vitesse de marche unique comme « system.details.move.value ». Si le chemin ne mène à rien, la détection automatique reprend la main.",
   "FQRESTRAIN.keybindings.bypass.name": "Contourner les restrictions de déplacement",
   "FQRESTRAIN.keybindings.bypass.hint": "Maintenez cette touche pour contourner temporairement toutes les restrictions de déplacement actives.",
   "FQRESTRAIN.notifications.distanceBlocked": "Déplacement de combat limité à votre vitesse ({speed}).",

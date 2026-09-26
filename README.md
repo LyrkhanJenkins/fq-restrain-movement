@@ -34,7 +34,7 @@ Sinon, télécharger `fq-restrain-movement.zip` depuis la [dernière release](ht
 | GM is not restrained | Exempte le MJ de toutes les restrictions | On     |
 | Block taking back a move | En combat, interdit le retour vers la position de début de tour | Off    |
 | Take-back grace window (seconds) | Délai après le début du tour avant gel de la position (`0` = gel immédiat) | 0      |
-| Actor speed data path | Chemin des vitesses sur la fiche, pour un système non détecté (vide = détection automatique) | vide   |
+| Actor speed data path | Chemin des vitesses sur la fiche, pour un système non détecté ; chemin sans résultat = détection automatique | `system.attributes.movement.speeds` |
 
 ## Contournements (override)
 
@@ -61,7 +61,9 @@ Chaque restriction peut laisser passer un déplacement sans être désactivée g
 - **Rien trouvé ?** La limite de vitesse devient un no-op ; le blocage hors tour, le take-back et les
   contournements continuent de fonctionner. Deux recours :
   - le réglage **Actor speed data path**, qui pointe directement les données
-    (`system.attributes.movement`, ou `system.details.move.value` pour une vitesse unique) ;
+    (`system.attributes.movement`, ou `system.details.move.value` pour une vitesse unique). Il vaut par défaut
+    l'emplacement dnd5e 6 `system.attributes.movement.speeds`, qui sert aussi d'exemple de format ; un chemin
+    qui ne mène à rien rend la main au sondage automatique (et le signale en console, sauf pour le défaut) ;
   - l'API `registerSystemAdapter` (ci-dessous), pour un adaptateur sur mesure.
 - **Unités** — les plafonds sont convertis dans l'unité de la scène quand la fiche et la scène utilisent des
   unités connues et différentes (pieds, mètres, yards, kilomètres...). Unité inconnue (« cases »...) : aucune

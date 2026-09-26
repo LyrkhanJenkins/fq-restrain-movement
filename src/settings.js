@@ -1,4 +1,4 @@
-import { MODULE_ID, SETTINGS, KEYBINDINGS } from "./constants.js";
+import { MODULE_ID, SETTINGS, KEYBINDINGS, DEFAULT_SPEED_PATH } from "./constants.js";
 
 /**
  * État module-level de la touche de bypass maintenue.
@@ -22,9 +22,10 @@ export function isBypassHeld() {
  * - `gmNotRestrained` : le MJ n'est pas soumis aux restrictions.
  * - `takeBackEnabled` : active/désactive le veto du retour en arrière (take-back).
  * - `speedPath` : chemin de données des vitesses, pour les systèmes dont
- *   l'adaptateur générique ne trouve pas les vitesses tout seul (vide par
- *   défaut : détection automatique). Ignoré par les adaptateurs dédiés
- *   (dnd5e, pf2e).
+ *   l'adaptateur générique ne trouve pas les vitesses tout seul. Par défaut
+ *   l'emplacement dnd5e 6 (`DEFAULT_SPEED_PATH`), qui sert aussi d'exemple de
+ *   format ; s'il ne mène à rien, le sondage automatique reprend la main.
+ *   Ignoré par les adaptateurs dédiés (dnd5e, pf2e).
  * - `takeBackGraceSeconds` : fenêtre de grâce (secondes) ouverte au début du
  *   tour avant que la position engagée ne devienne opposable. Défaut 0 (gel
  *   immédiat). Le plancher défensif (négatif/NaN -> 0) est assuré à la lecture
@@ -81,7 +82,7 @@ export function registerSettings() {
     scope: "world",
     config: true,
     type: String,
-    default: "",
+    default: DEFAULT_SPEED_PATH,
     name: "FQRESTRAIN.settings.speedPath.name",
     hint: "FQRESTRAIN.settings.speedPath.hint",
   });

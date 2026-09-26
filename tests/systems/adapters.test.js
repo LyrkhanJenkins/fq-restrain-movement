@@ -3,6 +3,7 @@ import { makeDnd5eAdapter } from "../../src/systems/dnd5e.js";
 import { makePf2eAdapter } from "../../src/systems/pf2e.js";
 import { makeGenericAdapter, readSpeedContainer } from "../../src/systems/generic.js";
 import { getPath, readNumber } from "../../src/systems/read.js";
+import { DEFAULT_SPEED_PATH } from "../../src/constants.js";
 
 /**
  * Adaptateurs système : chacun sait où son système range les vitesses. Tous
@@ -180,10 +181,41 @@ describe("systems / adaptateur générique", () => {
     expect(configured.readSpeeds(actor).speeds).toEqual({ walk: 12 });
   });
 
-  it("ne sonde pas derrière un chemin configuré illisible (faute de frappe visible)", () => {
-    const configured = makeGenericAdapter({ getSpeedPath: () => "system.faute.de.frappe" });
+  it("retombe sur le sondage quand le chemin configuré ne mène à rien, en avertissant une fois", () => {
+    const warnings = [];
+    const configured = makeGenericAdapter({
+      getSpeedPath: () => "system.faute.de.frappe",
+      warn: (message) => warnings.push(message),
+    });
     const actor = { system: { attributes: { movement: { walk: 30 } } } };
 
-    expect(configured.readSpeeds(actor)).toBeNull();
+    expect(configured.readSpeeds(actor).speeds).toEqual({ walk: 30 });
+    expect(configured.readSpeeds(actor).speeds).toEqual({ walk: 30 });
+    expect(warnings).toHaveLength(1);
+    expect(warnings[0]).toContain("system.faute.de.frappe");
+  });
+
+  // Le chemin dnd5e 6 est la valeur par défaut du réglage : il rate dans les
+  // autres systèmes, sans jamais devoir y désactiver la détection ni bavarder
+  // en console.
+  it("laisse le sondage opérer sous le chemin par défaut, sans avertir", () => {
+    const warnings = [];
+    const configured = makeGenericAdapter({
+      getSpeedPath: () => DEFAULT_SPEED_PATH,
+      warn: (message) => warnings.push(message),
+    });
+    const pf1 = { system: { attributes: { speed: { land: { total: 30 } } } } };
+
+    expect(configured.readSpeeds(pf1).speeds).toEqual({ walk: 30 });
+    expect(warnings).toHaveLength(0);
+  });
+
+  it("lit les vitesses dnd5e 6 quand le chemin par défaut aboutit", () => {
+    const configured = makeGenericAdapter({ getSpeedPath: () => DEFAULT_SPEED_PATH });
+    const actor = {
+      system: { attributes: { movement: { speeds: { walk: 30, fly: 60 }, units: "ft" } } },
+    };
+
+    expect(configured.readSpeeds(actor)).toEqual({ speeds: { walk: 30, fly: 60 }, units: "ft" });
   });
 });

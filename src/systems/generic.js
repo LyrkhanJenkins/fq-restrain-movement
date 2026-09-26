@@ -1,4 +1,4 @@
-import { MODULE_ID, SETTINGS } from "../constants.js";
+import { DEFAULT_SPEED_PATH, MODULE_ID, SETTINGS } from "../constants.js";
 import { firstUnits, getPath, readNumber } from "./read.js";
 
 /**
@@ -11,9 +11,13 @@ import { firstUnits, getPath, readNumber } from "./read.js";
  * un no-op et les autres restrictions (hors tour, retour en arrière) continuent
  * de fonctionner.
  *
- * Le réglage « chemin des vitesses » (`speedPath`) court-circuite le sondage :
- * le MJ peut pointer directement l'emplacement de son système, qu'il s'agisse
+ * Le réglage « chemin des vitesses » (`speedPath`) est essayé en premier : le
+ * MJ peut pointer directement l'emplacement de son système, qu'il s'agisse
  * d'un objet de vitesses par mode ou d'un simple nombre (vitesse de marche).
+ * Ce chemin vaut par défaut l'emplacement dnd5e 6 (`DEFAULT_SPEED_PATH`) ;
+ * quand il ne mène à rien — système rangeant ses vitesses ailleurs, faute de
+ * frappe — le sondage reprend la main, pour ne jamais désactiver la détection
+ * sur la seule foi d'un réglage.
  *
  * Aucun mode de déplacement n'est déclaré (`getMovementTypes()` vide) : toute
  * action retombe donc sur la vitesse de marche à défaut de vitesse propre —
@@ -108,8 +112,9 @@ export function readSpeedContainer(container) {
 
 /**
  * Dépendances par défaut : lecture défensive du réglage de chemin
- * personnalisé (les réglages ne sont pas enregistrés hors runtime Foundry).
- * @returns {{ getSpeedPath: () => string }}
+ * personnalisé (les réglages ne sont pas enregistrés hors runtime Foundry) et
+ * avertissement console.
+ * @returns {{ getSpeedPath: () => string, warn: (message: string) => void }}
  */
 function defaultDeps() {
   return {
@@ -120,16 +125,36 @@ function defaultDeps() {
         return "";
       }
     },
+    warn: (message) => console.warn(message),
   };
 }
 
 /**
  * Construit l'adaptateur générique.
- * @param {{ getSpeedPath?: () => string }} [deps]
+ * @param {{ getSpeedPath?: () => string, warn?: (message: string) => void }} [deps]
  * @returns {object} adaptateur système
  */
 export function makeGenericAdapter(deps = {}) {
-  const { getSpeedPath } = { ...defaultDeps(), ...deps };
+  const { getSpeedPath, warn } = { ...defaultDeps(), ...deps };
+
+  /** Chemins configurés déjà signalés : un avertissement, pas un par pas. */
+  const warned = new Set();
+
+  /**
+   * Signale une fois qu'un chemin configuré par le MJ ne mène à rien. Le
+   * chemin par défaut est tu : il rate normalement hors des systèmes
+   * dnd5e-like, et le sondage prend le relais.
+   * @param {string} path
+   */
+  function warnOnce(path) {
+    if (path === DEFAULT_SPEED_PATH || warned.has(path)) return;
+
+    warned.add(path);
+    warn(
+      `${MODULE_ID} | aucune vitesse lisible en "${path}" (réglage ${SETTINGS.speedPath}) : ` +
+        "détection automatique utilisée à la place.",
+    );
+  }
 
   return {
     id: "generic",
@@ -138,6 +163,8 @@ export function makeGenericAdapter(deps = {}) {
     readSpeeds(actor) {
       if (!actor) return null;
 
+      // Chemin configuré d'abord : c'est le recours du MJ quand le sondage ne
+      // trouve pas, ou trouve la mauvaise donnée.
       const customPath = getSpeedPath();
       if (typeof customPath === "string" && customPath.trim() !== "") {
         const path = customPath.trim();
@@ -145,9 +172,7 @@ export function makeGenericAdapter(deps = {}) {
         const speeds = readSpeedContainer(container);
         if (speeds) return { speeds, units: readUnits(actor, container) };
 
-        // Chemin renseigné mais illisible : on ne sonde pas derrière le dos du
-        // MJ, sinon une faute de frappe passerait inaperçue.
-        return null;
+        warnOnce(path);
       }
 
       for (const path of CONTAINERS) {

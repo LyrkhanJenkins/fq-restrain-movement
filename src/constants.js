@@ -16,6 +16,18 @@ export const FLAGS = {
 
 export const HOOK_EVALUATE = "fq-restrain-movement.evaluate";
 
+/**
+ * Valeur par défaut du réglage `speedPath` : l'emplacement des vitesses en
+ * dnd5e 6 (`actor.system.attributes.movement.speeds`), qui sert d'exemple de
+ * format autant que de valeur utile.
+ *
+ * Elle n'a d'effet que dans les systèmes servis par l'adaptateur générique :
+ * dnd5e et pf2e ont leur adaptateur dédié, qui ignore ce réglage. Dans un
+ * système où ce chemin ne mène à rien, l'adaptateur générique reprend son
+ * sondage automatique — le défaut ne désactive donc aucune détection.
+ */
+export const DEFAULT_SPEED_PATH = "system.attributes.movement.speeds";
+
 /** Action de déplacement par défaut quand aucune n'est portée par l'update. */
 export const DEFAULT_MOVEMENT_ACTION = "walk";
 
