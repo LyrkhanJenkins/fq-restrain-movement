@@ -5,6 +5,8 @@ on:
     tags:
       - "v[0-9]*"
       - "[0-9]*"
+  release:
+    types: [published]
   workflow_dispatch:
     inputs:
       tag:
@@ -32,7 +34,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ inputs.tag || github.ref }}
+          ref: ${{ inputs.tag || github.event.release.tag_name || github.ref }}
 
       - uses: actions/setup-node@v4
         with:
@@ -55,7 +57,7 @@ jobs:
         id: version
         run: |
           set -euo pipefail
-          TAG="${{ inputs.tag || github.ref_name }}"
+          TAG="${{ inputs.tag || github.event.release.tag_name || github.ref_name }}"
           VERSION="${TAG#v}"
           MANIFEST_VERSION="$(jq -r '.version' module.json)"
 
@@ -142,6 +144,13 @@ jobs:
             ARGS+=(--generate-notes)
           fi
 
-          gh release create "$TAG" "${ARGS[@]}" \
-            "dist/$MODULE_ID.zip" \
-            "dist/package/module.json"
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            echo "Release $TAG deja existante : mise a jour des assets."
+            gh release upload "$TAG" --clobber \
+              "dist/$MODULE_ID.zip" \
+              "dist/package/module.json"
+          else
+            gh release create "$TAG" "${ARGS[@]}" \
+              "dist/$MODULE_ID.zip" \
+              "dist/package/module.json"
+          fi
