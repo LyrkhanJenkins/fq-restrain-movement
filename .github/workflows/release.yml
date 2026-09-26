@@ -10,6 +10,14 @@ on:
       tag:
         description: "Tag existant a (re)publier, ex. v3.0.0"
         required: true
+      latest:
+        description: "Marquer comme release 'Latest' (decocher pour retro-publier une ancienne version)"
+        type: boolean
+        default: true
+      skip_checks:
+        description: "Sauter lint + tests (retro-publication d'un vieux tag uniquement)"
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -34,8 +42,14 @@ jobs:
       - run: npm ci
 
       # Meme garde-fou que l'ancienne pipeline GitLab : pas de release sur du rouge.
-      - run: npm run lint
-      - run: npx vitest run --reporter=default --reporter=github-actions
+      # Contournable seulement a la main, pour retro-publier un tag ancien.
+      - name: Lint
+        if: ${{ !inputs.skip_checks }}
+        run: npm run lint
+
+      - name: Test
+        if: ${{ !inputs.skip_checks }}
+        run: npx vitest run --reporter=default --reporter=github-actions
 
       - name: Resolve version and check module.json
         id: version
@@ -106,11 +120,20 @@ jobs:
           TAG: ${{ steps.version.outputs.tag }}
           PRERELEASE: ${{ steps.version.outputs.prerelease }}
           NOTES_FOUND: ${{ steps.notes.outputs.found }}
+          IS_LATEST: ${{ github.event_name != 'workflow_dispatch' || inputs.latest }}
         run: |
           set -euo pipefail
           ARGS=(--title "$TAG" --verify-tag)
           if [ "$PRERELEASE" = "true" ]; then
             ARGS+=(--prerelease)
+          fi
+
+          # Explicite : GitHub classe "Latest" par date de creation, donc
+          # retro-publier une vieille version detournerait releases/latest/.
+          if [ "$IS_LATEST" = "true" ]; then
+            ARGS+=(--latest)
+          else
+            ARGS+=(--latest=false)
           fi
 
           if [ "$NOTES_FOUND" = "true" ]; then
