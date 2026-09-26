@@ -1,0 +1,124 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v[0-9]*"
+      - "[0-9]*"
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Tag existant a (re)publier, ex. v3.0.0"
+        required: true
+
+permissions:
+  contents: write
+
+env:
+  MODULE_ID: fq-restrain-movement
+
+jobs:
+  release:
+    name: Build & publish
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.tag || github.ref }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+
+      # Meme garde-fou que l'ancienne pipeline GitLab : pas de release sur du rouge.
+      - run: npm run lint
+      - run: npx vitest run --reporter=default --reporter=github-actions
+
+      - name: Resolve version and check module.json
+        id: version
+        run: |
+          set -euo pipefail
+          TAG="${{ inputs.tag || github.ref_name }}"
+          VERSION="${TAG#v}"
+          MANIFEST_VERSION="$(jq -r '.version' module.json)"
+
+          if [ "$VERSION" != "$MANIFEST_VERSION" ]; then
+            echo "::error::Tag $TAG (version $VERSION) != module.json version $MANIFEST_VERSION"
+            exit 1
+          fi
+
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          case "$VERSION" in
+            *-*) echo "prerelease=true" >> "$GITHUB_OUTPUT" ;;
+            *)   echo "prerelease=false" >> "$GITHUB_OUTPUT" ;;
+          esac
+
+      - name: Build release package
+        env:
+          TAG: ${{ steps.version.outputs.tag }}
+          REPO_URL: ${{ github.server_url }}/${{ github.repository }}
+        run: |
+          set -euo pipefail
+          mkdir -p dist/package
+
+          # On n'embarque que ce qui est utile au runtime Foundry.
+          cp -r src lang LICENSE README.md dist/package/
+
+          # Le manifest pointe sur "latest" (Foundry y detecte les mises a jour),
+          # le download est epingle sur ce tag (installation d'une version precise).
+          jq \
+            --arg manifest "$REPO_URL/releases/latest/download/module.json" \
+            --arg download "$REPO_URL/releases/download/$TAG/$MODULE_ID.zip" \
+            '.manifest = $manifest | .download = $download' \
+            module.json > dist/package/module.json
+
+          (cd dist/package && zip -r "../$MODULE_ID.zip" .)
+          ls -l dist
+
+      - name: Extract release notes
+        id: notes
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          set -euo pipefail
+          awk -v v="$VERSION" '
+            /^## / {
+              if (found) exit
+              if ($2 == "v" v || $2 == v) { found = 1; next }
+            }
+            found
+          ' RELEASE.md > dist/notes.md || true
+
+          if [ -s dist/notes.md ]; then
+            echo "found=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "::warning::Pas de section '## v$VERSION' dans RELEASE.md, notes auto-generees."
+            echo "found=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Publish GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.version.outputs.tag }}
+          PRERELEASE: ${{ steps.version.outputs.prerelease }}
+          NOTES_FOUND: ${{ steps.notes.outputs.found }}
+        run: |
+          set -euo pipefail
+          ARGS=(--title "$TAG" --verify-tag)
+          if [ "$PRERELEASE" = "true" ]; then
+            ARGS+=(--prerelease)
+          fi
+
+          if [ "$NOTES_FOUND" = "true" ]; then
+            ARGS+=(--notes-file dist/notes.md)
+          else
+            ARGS+=(--generate-notes)
+          fi
+
+          gh release create "$TAG" "${ARGS[@]}" \
+            "dist/$MODULE_ID.zip" \
+            "dist/package/module.json"

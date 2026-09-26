@@ -11,6 +11,7 @@ node_modules/
 
 # Temporary
 /coverage/
+/dist/
 test-results.xml
 *.zip
 

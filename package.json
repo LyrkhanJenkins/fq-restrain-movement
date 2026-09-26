@@ -1,8 +1,17 @@
 {
   "name": "fq-restrain-movement",
-  "version": "0.1.0",
+  "version": "3.0.0",
   "description": "Configurable token movement restrictions for Foundry VTT",
   "type": "module",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LyrkhanJenkins/fq-restrain-movement.git"
+  },
+  "homepage": "https://github.com/LyrkhanJenkins/fq-restrain-movement#readme",
+  "bugs": {
+    "url": "https://github.com/LyrkhanJenkins/fq-restrain-movement/issues"
+  },
   "scripts": {
     "test": "vitest run",
     "test:watch": "vitest",
