@@ -6,11 +6,14 @@ import {
   getActionLabel,
   readMovementContext,
 } from "../src/movement.js";
+import { makeDnd5eAdapter } from "../src/systems/dnd5e.js";
+import { makeGenericAdapter } from "../src/systems/generic.js";
 
 /**
- * Tests des lecteurs de mode de déplacement sans runtime Foundry/dnd5e : les
- * registres `CONFIG.Token.movement.actions` et `CONFIG.DND5E.movementTypes`
- * sont injectés via `deps`, aucun accès à `CONFIG`/`game` réel.
+ * Tests des lecteurs de mode de déplacement sans runtime Foundry/dnd5e : le
+ * registre `CONFIG.Token.movement.actions` et l'adaptateur système (ici celui
+ * de dnd5e, dont les types de mouvement remplacent `CONFIG.DND5E`) sont
+ * injectés via `deps`, aucun accès à `CONFIG`/`game` réel.
  */
 
 /** Registre d'actions Foundry factice, reproduisant celui de dnd5e. */
@@ -35,12 +38,20 @@ const MOVEMENT_TYPES = {
   swim: { label: "DND5E.MOVEMENT.Type.Swim", walkFallback: true },
 };
 
-/** Construit un `deps` factice branché sur les registres ci-dessus. */
-function makeDeps() {
+/**
+ * Construit un `deps` factice branché sur les registres ci-dessus et sur
+ * l'adaptateur dnd5e (lecture des vitesses), scène en pieds.
+ * @param {{ adapter?: object, gridUnits?: string }} [options]
+ */
+function makeDeps({ adapter, gridUnits = "ft" } = {}) {
+  const systemAdapter = adapter ?? makeDnd5eAdapter({ getMovementTypes: () => MOVEMENT_TYPES });
+
   return {
     getActionConfig: (action) => ACTIONS[action],
     getActionIds: () => Object.keys(ACTIONS),
-    getMovementTypeConfig: (action) => MOVEMENT_TYPES[action],
+    getMovementTypeConfig: (action) => systemAdapter.getMovementTypes()[action],
+    readSpeeds: (actor) => systemAdapter.readSpeeds(actor),
+    getGridUnits: () => gridUnits,
     localize: (key) => `[${key}]`,
   };
 }
@@ -205,6 +216,46 @@ describe("movement / readMovementContext", () => {
 
     const context = readMovementContext(legacy, {}, makeDeps());
 
+    expect(context.speedByAction.walk).toBeNull();
+  });
+
+  it("expose l'unité de la scène, pour les notifications", () => {
+    const token = makeToken({ speeds: makeSpeeds() });
+
+    const context = readMovementContext(token, {}, makeDeps({ gridUnits: "m" }));
+
+    expect(context.speedUnits).toBe("m");
+  });
+
+  it("convertit les vitesses de l'acteur dans l'unité de la scène", () => {
+    const token = { id: "t1", actor: { system: { attributes: { movement: { speeds: { walk: 9 }, units: "m" } } } } };
+
+    const context = readMovementContext(token, {}, makeDeps({ gridUnits: "ft" }));
+
+    // 9 m -> ~29,53 pieds : la mesure de trajet, elle, est déjà en pieds.
+    expect(context.speedByAction.walk).toBeCloseTo(29.53, 2);
+    expect(context.speedUnits).toBe("ft");
+  });
+
+  it("passe par l'adaptateur générique dans un système inconnu (vitesse à la racine de `movement`)", () => {
+    const token = { id: "t1", actor: { system: { attributes: { movement: { walk: 40, fly: 0 } } } } };
+    const generic = makeGenericAdapter({ getSpeedPath: () => "" });
+
+    const context = readMovementContext(token, {}, makeDeps({ adapter: generic }));
+
+    expect(context.speedByAction.walk).toBe(40);
+    // Aucun mode déclaré par l'adaptateur générique : repli marche permissif.
+    expect(context.speedByAction.fly).toBe(40);
+    expect(context.actionLabels.fly).toBe("[TOKEN.ACTIONS.fly]");
+  });
+
+  it("ne restreint rien quand aucun adaptateur ne trouve de vitesse", () => {
+    const token = { id: "t1", actor: { system: { traits: {} } } };
+    const generic = makeGenericAdapter({ getSpeedPath: () => "" });
+
+    const context = readMovementContext(token, {}, makeDeps({ adapter: generic }));
+
+    expect(context.speed).toBeUndefined();
     expect(context.speedByAction.walk).toBeNull();
   });
 });

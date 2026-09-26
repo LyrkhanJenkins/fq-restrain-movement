@@ -87,8 +87,9 @@ export function buildMovementContext(tokenDocument, changes, options, userId) {
     // Contexte de combat : inCombat/isYourTurn, consommés par la règle
     // de distance. Lecteurs isolés et mockables.
     ...readCombatContext(tokenDocument),
-    // Contexte de mode de déplacement : movementAction/speed/speedByAction,
-    // consommés par la règle de distance (dnd5e).
+    // Contexte de mode de déplacement : movementAction/speed/speedByAction/
+    // speedUnits, consommés par la règle de distance. Les vitesses viennent de
+    // l'adaptateur du système courant (src/systems/).
     ...readMovementContext(tokenDocument, changes),
     // Position engagée (début de tour, en combat) : injectée depuis le service
     // de suivi (tracking.js), consommée par la règle take-back. La règle reste

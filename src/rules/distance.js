@@ -1,4 +1,5 @@
 import { DEFAULT_MOVEMENT_ACTION, MODULE_ID, RULE_IDS, SETTINGS } from "../constants.js";
+import { formatSpeed } from "../units.js";
 
 /**
  * Dépendances par défaut, branchées sur Foundry en production. Injectables
@@ -11,17 +12,17 @@ function defaultDeps() {
 }
 
 /**
- * Distance en PIEDS d'une mesure : `cost` en priorité, `distance` en repli —
- * jamais `spaces` (cases).
+ * Distance d'une mesure, dans l'unité de la scène : `cost` en priorité,
+ * `distance` en repli — jamais `spaces` (cases).
  * @param {{cost?: number, distance?: number}} measured
  * @returns {number|undefined}
  */
-function feetOf(measured) {
+function measuredDistance(measured) {
   return typeof measured?.cost === "number" ? measured.cost : measured?.distance;
 }
 
 /**
- * Plafond applicable (en pieds) pour une action de déplacement.
+ * Plafond applicable pour une action de déplacement, dans l'unité de la scène.
  * - `null` : aucune restriction (téléportation, vitesse inconnue).
  * - `0` : l'acteur ne peut pas se déplacer dans ce mode — tout déplacement
  *   non nul est bloqué.
@@ -40,8 +41,9 @@ function limitFor(context, action) {
 
 /**
  * Motif de blocage, enrichi du mode de déplacement quand il est connu et qu'il
- * n'est pas la marche (le libellé dnd5e de la marche est « Vitesse », inutile
- * dans la phrase).
+ * n'est pas la marche (le libellé de la marche est « Vitesse » en dnd5e,
+ * inutile dans la phrase). La vitesse annoncée est mise en forme avec l'unité
+ * de la scène (`context.speedUnits`) : le module ne suppose plus des pieds.
  * @param {object} context
  * @param {string} action
  * @param {number} limit
@@ -57,23 +59,27 @@ function blockedReason(context, action, limit) {
       : { key: "FQRESTRAIN.notifications.speedZero", data: {} };
   }
 
+  const speed = formatSpeed(limit, context.speedUnits);
+
   return named
     ? {
       key: "FQRESTRAIN.notifications.distanceBlockedAction",
-      data: { speed: limit, action: label },
+      data: { speed, action: label },
     }
-    : { key: "FQRESTRAIN.notifications.distanceBlocked", data: { speed: limit } };
+    : { key: "FQRESTRAIN.notifications.distanceBlocked", data: { speed } };
 }
 
 /**
  * Règle de limite de vitesse de combat, sensible au mode de déplacement.
  * En combat et au tour du token, bloque tout déplacement dont le cumul mesuré
- * en PIEDS dépasse la vitesse du mode utilisé (marche, vol, terrier, escalade,
- * nage — cf. `src/movement.js`). Une vitesse à 0 interdit tout déplacement
- * dans ce mode. Hors combat, hors tour, gridless ou vitesse inconnue (acteur
- * sans donnée de mouvement, téléportation) : no-op.
+ * dépasse la vitesse du mode utilisé (marche, vol, terrier, escalade, nage —
+ * cf. `src/movement.js`, alimenté par l'adaptateur système). Mesure et
+ * plafonds sont exprimés dans l'unité de la scène. Une vitesse à 0 interdit
+ * tout déplacement dans ce mode. Hors combat, hors tour, gridless ou vitesse
+ * inconnue (acteur sans donnée de mouvement exploitable, système sans
+ * adaptateur, téléportation) : no-op.
  *
- * Modes mélangés dans un même tour : applique la règle dnd5e de bascule de
+ * Modes mélangés dans un même tour : applique la règle de bascule de
  * vitesse — à chaque segment, le cumul parcouru depuis le début du tour doit
  * rester dans la vitesse du mode utilisé sur ce segment (« soustrayez la
  * distance déjà parcourue de la nouvelle vitesse »). N'est appliqué que si la
@@ -118,7 +124,7 @@ export function makeDistanceRule(deps = {}) {
       const measure = context.measurePath ?? ((points) => context.grid.measurePath(points));
       const result = measure(waypoints);
 
-      const total = feetOf(result);
+      const total = measuredDistance(result);
       context.distance = total;
 
       // Cumuls par waypoint : règle de bascule segment par segment.
@@ -129,7 +135,7 @@ export function makeDistanceRule(deps = {}) {
           const limit = limitFor(context, action);
           if (limit === null) continue;
 
-          const travelled = feetOf(cumulative[index]);
+          const travelled = measuredDistance(cumulative[index]);
           if (typeof travelled !== "number") continue;
 
           if (travelled > limit) {

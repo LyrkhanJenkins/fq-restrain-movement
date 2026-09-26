@@ -55,7 +55,7 @@ describe("règle distance — plafond par mode de déplacement", () => {
     expect(result.allowed).toBe(false);
     expect(result.reason).toEqual({
       key: "FQRESTRAIN.notifications.distanceBlockedAction",
-      data: { speed: 60, action: "Vol" },
+      data: { speed: "60 ft", action: "Vol" },
     });
   });
 
@@ -120,7 +120,7 @@ describe("règle distance — plafond par mode de déplacement", () => {
 
     expect(rule.evaluate(context).reason).toEqual({
       key: "FQRESTRAIN.notifications.distanceBlocked",
-      data: { speed: 30 },
+      data: { speed: "30 ft" },
     });
   });
 
@@ -162,7 +162,7 @@ describe("règle distance — bascule de vitesse entre modes sur un même tour",
     expect(result.allowed).toBe(false);
     expect(result.reason).toEqual({
       key: "FQRESTRAIN.notifications.distanceBlocked",
-      data: { speed: 30 },
+      data: { speed: "30 ft" },
     });
   });
 
@@ -177,7 +177,7 @@ describe("règle distance — bascule de vitesse entre modes sur un même tour",
     const result = rule.evaluate(context);
 
     expect(result.allowed).toBe(false);
-    expect(result.reason.data).toEqual({ speed: 60, action: "Vol" });
+    expect(result.reason.data).toEqual({ speed: "60 ft", action: "Vol" });
   });
 
   it("ne plafonne pas les segments de téléportation", () => {

@@ -58,6 +58,9 @@ export function makeContext(overrides = {}) {
     inCombat: false,
     isYourTurn: false,
     speed: 30,
+    // Unité de distance de la scène : les plafonds annoncés dans les
+    // notifications en héritent (cf. `formatSpeed`).
+    speedUnits: "ft",
     engagedPosition: null,
     grid: {
       isGridless: false,

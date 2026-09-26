@@ -6,6 +6,7 @@ export const SETTINGS = {
   gmNotRestrained: "gmNotRestrained",
   takeBackEnabled: "takeBackEnabled",
   takeBackGraceSeconds: "takeBackGraceSeconds",
+  speedPath: "speedPath",
 };
 
 export const FLAGS = {
@@ -20,7 +21,7 @@ export const DEFAULT_MOVEMENT_ACTION = "walk";
 
 /**
  * Actions dont le plafond retombe explicitement sur la vitesse de marche, en
- * complément de l'indicateur `walkFallback` de `CONFIG.DND5E.movementTypes` :
+ * complément de l'indicateur `walkFallback` rendu par l'adaptateur système :
  * la marche elle-même, et le saut (dnd5e stocke sous `movement.jump` une
  * distance de saut, pas une vitesse — elle ne doit pas servir de plafond).
  */

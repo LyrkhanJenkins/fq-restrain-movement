@@ -32,7 +32,7 @@ describe("intégration — limite de vitesse en combat", () => {
 
     expect(decision.allowed).toBe(false);
     expect(decision.reason.key).toBe("FQRESTRAIN.notifications.distanceBlocked");
-    expect(decision.reason.data.speed).toBe(30);
+    expect(decision.reason.data.speed).toBe("30 ft");
     expect(decision.rule).toBe(RULE_IDS.distance);
   });
 

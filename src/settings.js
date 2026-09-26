@@ -21,6 +21,10 @@ export function isBypassHeld() {
  * - `turnEnabled` : active/désactive le blocage du déplacement hors de son tour.
  * - `gmNotRestrained` : le MJ n'est pas soumis aux restrictions.
  * - `takeBackEnabled` : active/désactive le veto du retour en arrière (take-back).
+ * - `speedPath` : chemin de données des vitesses, pour les systèmes dont
+ *   l'adaptateur générique ne trouve pas les vitesses tout seul (vide par
+ *   défaut : détection automatique). Ignoré par les adaptateurs dédiés
+ *   (dnd5e, pf2e).
  * - `takeBackGraceSeconds` : fenêtre de grâce (secondes) ouverte au début du
  *   tour avant que la position engagée ne devienne opposable. Défaut 0 (gel
  *   immédiat). Le plancher défensif (négatif/NaN -> 0) est assuré à la lecture
@@ -71,6 +75,15 @@ export function registerSettings() {
     default: 0,
     name: "FQRESTRAIN.settings.takeBackGraceSeconds.name",
     hint: "FQRESTRAIN.settings.takeBackGraceSeconds.hint",
+  });
+
+  game.settings.register(MODULE_ID, SETTINGS.speedPath, {
+    scope: "world",
+    config: true,
+    type: String,
+    default: "",
+    name: "FQRESTRAIN.settings.speedPath.name",
+    hint: "FQRESTRAIN.settings.speedPath.hint",
   });
 }
 

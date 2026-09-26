@@ -46,7 +46,7 @@ describe("makeDistanceRule (limite de vitesse de combat)", () => {
     expect(result.allowed).toBe(false);
     expect(result.reason).toEqual({
       key: "FQRESTRAIN.notifications.distanceBlocked",
-      data: { speed: 30 },
+      data: { speed: "30 ft" },
     });
   });
 
