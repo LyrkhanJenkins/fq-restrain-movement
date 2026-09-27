@@ -33,6 +33,7 @@
   "socket": false,
   "url": "https://github.com/LyrkhanJenkins/fq-restrain-movement",
   "readme": "https://github.com/LyrkhanJenkins/fq-restrain-movement#readme",
+  "license": "MIT",
   "bugs": "https://github.com/LyrkhanJenkins/fq-restrain-movement/issues",
   "changelog": "https://github.com/LyrkhanJenkins/fq-restrain-movement/blob/main/RELEASE.md",
   "manifest": "https://github.com/LyrkhanJenkins/fq-restrain-movement/releases/latest/download/module.json",
