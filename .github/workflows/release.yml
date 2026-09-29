@@ -1,12 +1,13 @@
 name: Release
 
+# Pas de declencheur `release: published` : ce workflow PUBLIE la release, donc
+# l'ecouter le ferait tourner deux fois pour un seul tag. Constate sur
+# fq-restrain-movement 3.0.0, ou un push de tag a produit deux executions.
 on:
   push:
     tags:
       - "v[0-9]*"
       - "[0-9]*"
-  release:
-    types: [published]
   workflow_dispatch:
     inputs:
       tag:
@@ -34,7 +35,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ inputs.tag || github.event.release.tag_name || github.ref }}
+          ref: ${{ inputs.tag || github.ref }}
 
       - uses: actions/setup-node@v4
         with:
@@ -57,7 +58,7 @@ jobs:
         id: version
         run: |
           set -euo pipefail
-          TAG="${{ inputs.tag || github.event.release.tag_name || github.ref_name }}"
+          TAG="${{ inputs.tag || github.ref_name }}"
           VERSION="${TAG#v}"
           MANIFEST_VERSION="$(jq -r '.version' module.json)"
 
