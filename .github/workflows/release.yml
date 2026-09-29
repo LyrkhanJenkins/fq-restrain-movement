@@ -61,7 +61,7 @@ jobs:
 
       - run: npm ci
 
-      # Meme garde-fou que l'ancienne pipeline GitLab : pas de release sur du rouge.
+      # Meme garde-fou que l'ancienne pipeline : pas de release sur du rouge.
       # Contournable seulement a la main, pour retro-publier un tag ancien.
       - name: Lint
         if: ${{ !inputs.skip_checks }}
