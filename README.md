@@ -1,7 +1,7 @@
 # FQ Restrain Movement
 
-[![CI](https://github.com/LyrkhanJenkins/fq-restrain-movement/actions/workflows/ci.yml/badge.svg)](https://github.com/LyrkhanJenkins/fq-restrain-movement/actions/workflows/ci.yml)
-[![Latest release](https://img.shields.io/github/v/release/LyrkhanJenkins/fq-restrain-movement?sort=semver)](https://github.com/LyrkhanJenkins/fq-restrain-movement/releases/latest)
+[![CI](https://github.com/final-quest/fq-restrain-movement/actions/workflows/ci.yml/badge.svg)](https://github.com/final-quest/fq-restrain-movement/actions/workflows/ci.yml)
+[![Latest release](https://img.shields.io/github/v/release/final-quest/fq-restrain-movement?sort=semver)](https://github.com/final-quest/fq-restrain-movement/releases/latest)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
 Module Foundry VTT (v14, tous systèmes) qui restreint les déplacements des tokens des joueurs. Chaque restriction s'active indépendamment, et le MJ peut toujours laisser passer un déplacement au cas par cas.
@@ -13,10 +13,10 @@ Le module intercepte souris **et** clavier : les deux passent par le même point
 Dans Foundry : **Configuration → Add-on Modules → Install Module**, puis coller ce manifest :
 
 ```
-https://github.com/LyrkhanJenkins/fq-restrain-movement/releases/latest/download/module.json
+https://github.com/final-quest/fq-restrain-movement/releases/latest/download/module.json
 ```
 
-Sinon, télécharger `fq-restrain-movement.zip` depuis la [dernière release](https://github.com/LyrkhanJenkins/fq-restrain-movement/releases/latest) et le décompresser dans `Data/modules/`.
+Sinon, télécharger `fq-restrain-movement.zip` depuis la [dernière release](https://github.com/final-quest/fq-restrain-movement/releases/latest) et le décompresser dans `Data/modules/`.
 
 ## Fonctionnalités
 
@@ -105,4 +105,4 @@ MIT — voir [LICENSE](LICENSE).
 
 ## Contribuer
 
-Les issues et pull requests se font sur [GitHub](https://github.com/LyrkhanJenkins/fq-restrain-movement/issues). La CI vérifie ESLint et Vitest sur chaque PR ; `npm run lint` et `npm test` en local avant de proposer un changement.
+Les issues et pull requests se font sur [GitHub](https://github.com/final-quest/fq-restrain-movement/issues). La CI vérifie ESLint et Vitest sur chaque PR ; `npm run lint` et `npm test` en local avant de proposer un changement.

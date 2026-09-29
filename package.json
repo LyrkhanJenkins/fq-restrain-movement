@@ -6,11 +6,11 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/LyrkhanJenkins/fq-restrain-movement.git"
+    "url": "git+https://github.com/final-quest/fq-restrain-movement.git"
   },
-  "homepage": "https://github.com/LyrkhanJenkins/fq-restrain-movement#readme",
+  "homepage": "https://github.com/final-quest/fq-restrain-movement#readme",
   "bugs": {
-    "url": "https://github.com/LyrkhanJenkins/fq-restrain-movement/issues"
+    "url": "https://github.com/final-quest/fq-restrain-movement/issues"
   },
   "scripts": {
     "test": "vitest run",
