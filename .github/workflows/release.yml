@@ -83,7 +83,16 @@ jobs:
           mkdir -p dist/package
 
           # On n'embarque que ce qui est utile au runtime Foundry.
-          cp -r src lang LICENSE README.md dist/package/
+          # Chaque entree n'est copiee QUE SI ELLE EXISTE : un tag ancien ne porte
+          # pas forcement tout, et une copie rigide ferait echouer la
+          # retro-publication.
+          for item in src lang LICENSE README.md; do
+            if [ -e "$item" ]; then
+              cp -r "$item" dist/package/
+            else
+              echo "::notice::absent de ce tag, non embarque : $item"
+            fi
+          done
 
           # Le manifest pointe sur "latest" (Foundry y detecte les mises a jour),
           # le download est epingle sur ce tag (installation d'une version precise).
