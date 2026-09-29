@@ -128,10 +128,16 @@ jobs:
           VERSION: ${{ steps.version.outputs.version }}
         run: |
           set -euo pipefail
+          # Le fichier RELEASE.md decrit chaque version par un bloc « Update X.Y.Z: »
+          # suivi de lignes indentees, jusqu'au prochain « Update » : meme format que
+          # le RELEASE de fq-card-engine.
+          # Les tags poses avant ce changement portent l'ancien format « ## vX.Y.Z » :
+          # les deux marqueurs sont acceptes, sinon toute retro-publication d'un tag
+          # ancien repartirait sur des notes auto-generees.
           awk -v v="$VERSION" '
-            /^## / {
+            index($0, "Update ") == 1 || index($0, "## ") == 1 {
               if (found) exit
-              if ($2 == "v" v || $2 == v) { found = 1; next }
+              if (index($0, "Update " v ":") == 1 || $2 == "v" v || $2 == v) { found = 1; next }
             }
             found
           ' RELEASE.md > dist/notes.md || true
@@ -139,7 +145,7 @@ jobs:
           if [ -s dist/notes.md ]; then
             echo "found=true" >> "$GITHUB_OUTPUT"
           else
-            echo "::warning::Pas de section '## v$VERSION' dans RELEASE.md, notes auto-generees."
+            echo "::warning::Pas de bloc 'Update $VERSION:' dans RELEASE.md, notes auto-generees."
             echo "found=false" >> "$GITHUB_OUTPUT"
           fi
 
